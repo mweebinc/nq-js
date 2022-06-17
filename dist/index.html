@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script src="app.bundle.js"></script>
+<script>
+  const {Queue, Config} = NQ
+  console.log(Config.get('SERVER_URL'))
+  console.log(Config.get('APPLICATION_ID'))
+
+
+  const registeredUser = {
+      username : 'jaygilbert@1',
+      password : 'jaygilbert@123'
+  }
+
+  const user = new Queue.User();
+  user.testFunction();
+</script>
+
+</body>
+</html>
