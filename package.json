@@ -2,14 +2,15 @@
   "dependencies": {
     "jasmine": "^4.1.0",
     "node-polyfill-webpack-plugin": "^1.1.4",
-    "nodemon": "^2.0.16"
+    "nodemon": "^2.0.16",
+    "xmlhttprequest": "^1.8.0"
   },
   "name": "nq",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "nodemon src/index.js",
-  "test": "jasmine spec/Queue.spec.js",
+    "test": "jasmine spec/XhrAdapter.spec.js",
     "dev": "webpack serve",
     "build": "webpack"
   },
