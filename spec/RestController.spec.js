@@ -1,36 +1,15 @@
 const Queue = require('../src/Queue');
 const RestController = require('../src/controllers/RestController')
 const getRestController = require('../src/controllers/index');
-const http = require("http");
+const UserCache = require('../src/data/user/source/UserCache')
+const getXhrAdapter  = require('../src/adapters/rest/xhr/index')
+const GetMemoryAdapter = require("../src/adapters/cache/memory");
 const appId = '6560588f36297abd70cb7433774d5e09';
 const masterKey = '43600a5f650ed69e3391ccdf271332d437f4026e';
 
 
 
-describe('rest controller', () =>{
-    /*const port = 80;
-    let server;
-    beforeAll((done) => {
-        server = http.createServer((req, res) => {
-            res.setHeader('Content-Type', 'application/json');
-            res.setHeader('X-Application-Id', appId);
-            res.setHeader('X-Master-Key', masterKey);
-            res.statusCode = 200;
-
-            res.end('okay');
-        });
-        server.listen(port, () => {
-            console.log('start test server');
-            done();
-        });
-    });
-    afterAll((done) => {
-        server.close(() => {
-            console.log('server closed');
-            done();
-        });
-    });*/
-
+xdescribe('http  rest adapter', () =>{
 
     //initialize values
     Queue.setUrl('http://localhost/v1');
@@ -181,4 +160,4 @@ describe('rest controller', () =>{
             })
             .catch(done.fail);
     });
-})
+});
