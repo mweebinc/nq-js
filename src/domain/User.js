@@ -28,6 +28,7 @@ class User {
         const options = {
             body : user
         }
+
         return this.rest.request('POST', '/signin', options)
             .then(response => {
                 this.rest.setSession(response.sessionToken)
