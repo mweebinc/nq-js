@@ -5,11 +5,24 @@
     <title>Title</title>
 </head>
 <body>
+
+    <div>
+        <label id="my_label1"></label>
+    </div>
+    <div>
+        <label id="my_label2"></label>
+    </div>
+    <div>
+        <label id="my_label3"></label>
+    </div>
+
+
 <script src="app.bundle.js"></script>
 <script>
   const {Queue, Config} = NQ
-  console.log(Config.get('SERVER_URL'))
-  console.log(Config.get('APPLICATION_ID'))
+  document.getElementById('my_label1').textContent = Config.get('SERVER_URL');
+  document.getElementById('my_label2').textContent = Config.get('APPLICATION_ID');
+
 
   const registeredUser = {
       username : 'jaygilbert@1',
@@ -20,13 +33,21 @@
   user.testFunction();
 
   const doc =  new Queue.Document();
-  const newDocument = {
-      name : 'Laptop1',
-      price : 13000
-  }
-  doc.create(newDocument)
-      .then(response => console.log(response))
-      .catch(error => console.log(error))
+  doc.testFunction()
+
+  const collection = new Queue.Collection();
+  collection.testFunction();
+
+
+
+  user.signin(registeredUser)
+      .then(response => {
+          document.getElementById('my_label3').textContent = response.toString()
+      })
+      .catch(error => {
+          document.getElementById('my_label3').textContent = error.toString()
+      })
+
 
 </script>
 
