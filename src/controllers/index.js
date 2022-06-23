@@ -4,10 +4,10 @@ const GetMemoryAdapter = require('../adapters/cache/memory');
 const getXhrAdapter = require('../adapters/rest/xhr/index')
 const UserCache = require('../data/user/source/UserCache')
 
-const  GetLocalStorageAdapter =  require('../adapters/cache/local/LocalStorageAdapter')
+const  getCacheAdapter =  require('../adapters/cache/local')
 
 //localStorage
-const localStorageAdapter = new GetLocalStorageAdapter(NaN);
+const localStorageAdapter = getCacheAdapter(NaN);
 
 // const memoryAdapter = new GetMemoryAdapter(NaN); <-- memory
 const userCache = new UserCache(localStorageAdapter);

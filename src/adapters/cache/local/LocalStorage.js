@@ -18,6 +18,7 @@ class LocalStorage {
     }
 
     get(key) {
+
         let record = this.localStorage.getItem(key);
         if (record == null) {
             return null;

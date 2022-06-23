@@ -17,6 +17,7 @@ class RestController{
             })
     }
     setSession(session){
+        console.log(this.cache);
         this.cache.set({token : session});
     }
 
