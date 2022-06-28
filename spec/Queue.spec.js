@@ -199,12 +199,13 @@ xdescribe('Collection', function(){
             .catch(done.fail);
     });
 });
-xdescribe('Users', function(){
+describe('Users', function(){
     xit('should signup a new user', function(done){
         //create a new user, must be unique
         const newUser = {
-            username : 'jaygilbertgarzonwithemail17',
-            password : 'jaygilbert@123',
+            username : 'jygrzn@gmail.com',
+            email : 'jygrzn@gmail.com',
+            password : '123123123',
         }
         const user = new Queue.User();
         user.signup(newUser)
@@ -228,7 +229,7 @@ xdescribe('Users', function(){
             })
             .catch(done.fail);
     });
-    it('should signin', function(done){
+    xit('should signin', function(done){
         const registeredUser = {
             username : 'jaygilbert@1',
             password : 'jaygilbert@123'
@@ -366,4 +367,21 @@ xdescribe('Users', function(){
             .catch(done.fail)
 
     });
+    it('invalid session token', function (done) {
+        console.log(typeof window)
+        const userQueue = new Queue.User();
+        userQueue.rest.setSession('some session')
+
+        const user = {
+            email : 'somenewemailyyy@gmail.com',
+            username : 'somenewemailyyy111@gmail.com',
+            password : '123123123s'
+        }
+        userQueue.signup(user)
+            .then(response => {
+                console.log(response)
+                done();
+            })
+            .catch(done.fail)
+    })
 });
