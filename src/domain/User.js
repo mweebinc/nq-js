@@ -20,6 +20,10 @@ class User {
     }
     get(){
         return this.rest.request('GET', '/me')
+            .catch((error) => {
+                this.rest.clearSession();
+                return error;
+            })
     }
     signup(user){
         const options = {
@@ -35,9 +39,9 @@ class User {
         return this.rest.request('POST', '/signin', options)
             .then(response => {
                 this.rest.setSession(response.sessionToken)
+                console.log('then signin')
                 return response;
             })
-
     }
     resetPassword(user) {
         const options = {

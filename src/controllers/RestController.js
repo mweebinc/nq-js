@@ -78,10 +78,9 @@ class RestController{
         return this.adapter.request(url, options)
             .catch(error => {
                 if(error.code === 209){
-                    console.log('session error');
-                    this.cache.clear()
+                    this.cache.clear();
                 }
-                return error;
+                throw error;
             });
     }
 }
