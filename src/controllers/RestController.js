@@ -8,8 +8,6 @@ class RestController{
         this.adapter = adapter;
         this.cache = cache;
     }
-
-    //null
     getUser(){
         this.cache.get('token')
             .then((session) => {
