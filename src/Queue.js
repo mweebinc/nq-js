@@ -9,6 +9,7 @@ class Queue{
     static Collection = Collection;
     static Document = Document;
 
+
     static setApplicationId(value){
         Config.set('APPLICATION_ID', value);
     }

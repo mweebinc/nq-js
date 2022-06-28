@@ -9,13 +9,23 @@ const  getCacheAdapter =  require('../adapters/cache/local')
 //localStorage
 const localStorageAdapter = getCacheAdapter(NaN);
 
-// const memoryAdapter = new GetMemoryAdapter(NaN); <-- memory
-const userCache = new UserCache(localStorageAdapter);
+ const memoryAdapter = new GetMemoryAdapter(NaN);
+const userCache = new UserCache(memoryAdapter);
 
 function getRestController(){
-    // const restAdapter = getRestAdapter();
-    const xhrAdapter =  getXhrAdapter();
-    return new RestController(xhrAdapter, userCache);
+    if(typeof window !== 'undefined'){
+        const xhrAdapter =  getXhrAdapter();
+        const localCache = new UserCache(localStorageAdapter)
+        return new RestController(xhrAdapter, localCache)
+
+    }else{
+        const restAdapter = getRestAdapter();
+        // const xhrAdapter =  getXhrAdapter();
+        return new RestController(restAdapter, userCache);
+    }
+
+
+
 }
 
 module.exports = getRestController

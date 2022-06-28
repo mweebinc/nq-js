@@ -24,27 +24,22 @@
   document.getElementById('my_label2').textContent = Config.get('APPLICATION_ID');
 
 
-  const registeredUser = {
-      username : 'jaygilbert@1',
-      password : 'jaygilbert@123'
+
+  const user1 = new Queue.User();
+  user1.rest.clearSession();
+
+  const user = {
+      email : 'somenewemail1232@gmail.com',
+      username : 'somenewemail1232bb@gmail.com',
+      password : '123123123'
   }
 
-  const user = new Queue.User();
-  user.testFunction();
-
-  const doc =  new Queue.Document();
-  doc.testFunction()
-
-  const collection = new Queue.Collection();
-  collection.testFunction();
-
-  user.signin(registeredUser)
+  user1.signup(user)
       .then(response => {
-           document.getElementById('my_label3').textContent = JSON.stringify(response)
+          console.log(response)
       })
-      .catch(error => {
-          document.getElementById('my_label3').textContent = JSON.stringify(error)
-      })
+      .catch(error => console.log(error))
+
 
 
 </script>
