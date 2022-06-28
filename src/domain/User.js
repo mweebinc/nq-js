@@ -14,6 +14,9 @@ class User {
                 this.rest.clearSession();
                 return response;
             })
+            .catch(() => {
+                this.rest.clearSession();
+            })
     }
     get(){
         return this.rest.request('GET', '/me')

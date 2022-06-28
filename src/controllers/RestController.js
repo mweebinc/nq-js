@@ -77,7 +77,14 @@ class RestController{
             body : args.body,
             headers : this.headers
         }
-        return this.adapter.request(url, options);
+        return this.adapter.request(url, options)
+            .catch(error => {
+                if(error.code === 209){
+                    console.log('session error');
+                    this.cache.clear()
+                }
+                return error;
+            });
     }
 }
 module.exports = RestController;
