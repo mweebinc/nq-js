@@ -7,7 +7,6 @@ class LocalStorageAdapter {
 
     get(key) {
         const record = this.cache.get(key);
-        console.log(record);
         return Promise.resolve(record);
     }
 

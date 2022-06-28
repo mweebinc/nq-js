@@ -368,7 +368,6 @@ describe('Users', function(){
 
     });
     it('invalid session token', function (done) {
-        console.log(typeof window)
         const userQueue = new Queue.User();
         userQueue.rest.setSession('some session')
 
@@ -379,7 +378,7 @@ describe('Users', function(){
         }
         userQueue.signup(user)
             .then(response => {
-                console.log(response)
+                expect(response).toEqual({ code: 209, message: 'Invalid session token' })
                 done();
             })
             .catch(done.fail)
