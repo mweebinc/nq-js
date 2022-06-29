@@ -10,7 +10,7 @@ module.exports = {
     },
     output : {
         path : path.resolve(__dirname, './dist'),
-        filename : 'app.bundle.js',
+        filename : 'nq-bundle.js',
         library : 'NQ',
         libraryTarget: 'umd',
         globalObject: 'this',
