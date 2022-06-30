@@ -4,11 +4,8 @@ class User {
     constructor() {
         this.rest = getRestController()
     }
-    testFunction(){
-        console.log('test from user');
-    }
 
-    signout(){
+    signOut() {
         return this.rest.request('POST', '/signout')
             .then(response => {
                 this.rest.clearSession();
@@ -18,38 +15,38 @@ class User {
                 this.rest.clearSession();
             })
     }
-    get(){
-        return this.rest.request('GET', '/me')
-            .catch((error) => {
-                this.rest.clearSession();
-                return error;
-            })
-    }
-    signup(user){
+
+    signUp(user) {
         const options = {
-            body : user
+            body: user
         }
         return this.rest.request('POST', '/signup', options)
     }
-    signin(user){
+
+    signIn(user) {
         const options = {
-            body : user
+            body: user
         }
 
         return this.rest.request('POST', '/signin', options)
             .then(response => {
                 this.rest.setSession(response.sessionToken)
-                console.log('then signin')
                 return response;
             })
     }
+
     resetPassword(user) {
         const options = {
-            body : {
-                email : user.email
+            body: {
+                email: user.email
             }
         }
         return this.rest.request('POST', '/reset/', options);
     }
+
+    get() {
+        return this.rest.request('GET', '/me');
+    }
 }
+
 module.exports = User;

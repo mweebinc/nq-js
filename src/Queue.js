@@ -1,23 +1,25 @@
-const User = require('./domain/User');
 const Collection = require('./domain/Collection');
 const Document = require('./domain/Document');
-const Config = require('./Config')
+const User = require('./domain/User');
+const Config = require('./Config');
 
-//gateway
-class Queue{
-    static User = User;
-    static Collection = Collection;
-    static Document = Document;
+class Queue {
 
-
-    static setApplicationId(value){
-        Config.set('APPLICATION_ID', value);
-    }
-    static setMasterKey(value){
-        Config.set('MASTER_KEY', value);
-    }
-    static setUrl(value){
+    static setUrl(value) {
         Config.set('SERVER_URL', value);
     }
+
+    static setApplicationId(value) {
+        Config.set('APPLICATION_ID', value);
+    }
+
+    static setMasterKey(value) {
+        Config.set('MASTER_KEY', value);
+    }
+
 }
+
+Queue.User = User;
+Queue.Collection = Collection;
+Queue.Document = Document;
 module.exports = Queue;

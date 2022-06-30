@@ -1,87 +1,88 @@
-//headers
-//urls
-//crud
 const Config = require('../Config');
 
-class RestController{
+class RestController {
     constructor(adapter, cache) {
         this.adapter = adapter;
         this.cache = cache;
     }
-    getUser(){
+
+    getSession() {
         this.cache.get('token')
             .then((session) => {
                 this.session = session;
             })
     }
-    setSession(session){
-        this.cache.set({token : session});
+
+    setSession(session) {
+        this.cache.set({'token': session});
     }
 
-    clearSession(){
+    clearSession() {
         this.cache.clear()
     }
 
     setAppId() {
         this.appId = Config.get('APPLICATION_ID');
     }
-    setMasterKey(){
-        this.masterKey = Config.get('MASTER_KEY');
-    }
-    setUrl(path){
+
+    getUrl(path) {
         const base = Config.get('SERVER_URL');
         return new URL(base + path);
     }
-    writeHeader(){
+
+    writeHeader() {
         this.headers = {};
         this.headers['Content-Type'] = 'application/json';
         this.headers['X-Application-Id'] = this.appId;
-        this.headers['X-Master-Key'] = this.masterKey;
-        if(this.session){
+        if (this.session) {
             this.headers['X-Session-Token'] = this.session.token
         }
     }
-    //get path
-    init(path){
+
+    init(path) {
         return Promise.resolve()
             .then(() => this.setAppId())
-            .then(() => this.setMasterKey())
-            .then(() => this.getUser())
+            .then(() => this.getSession())
             .then(() => this.writeHeader())
-            .then(() => this.setUrl(path));
+            .then(() => this.getUrl(path));
     }
-    //accessible sa labas
-    request(method, path, args = {}){
-        if(args && args.body){
-            args.body = JSON.stringify(args.body);
-        }
-        return this.init(path)
-            .then((url) => this.send(url, {method, ...args}));
-    }
-    send(url, args){
-        if (args.query) {
-            for (const p in args.query) {
-                url.searchParams.set(p, JSON.stringify(args.query[p]));
+
+    request(method, path, options = {}) {
+        if (options && options.body) {
+            if(typeof options.body === 'object'){
+                options.body = JSON.stringify(options.body);
             }
         }
-        if(args.headers){
-            this.headers = Object.assign(this.headers, args.headers)
+        return Promise.resolve()
+            .then(() => this.init(path))
+            .then((url) => this.send(url, {method, ...options}));
+    }
+
+    send(url, options) {
+        if (options.query) {
+            for (const p in options.query) {
+                url.searchParams.set(p, JSON.stringify(options.query[p]));
+            }
         }
-        if(args.session) {
-            this.headers['X-Session-Token'] = args.session;
+        if (options.headers) {
+            this.headers = Object.assign(this.headers, options.headers)
         }
-        const options = {
-            method : args.method,
-            body : args.body,
-            headers : this.headers
+        if (options.session) {
+            this.headers['X-Session-Token'] = options.session;
         }
-        return this.adapter.request(url, options)
+        const _options = {
+            method: options.method,
+            body: options.body,
+            headers: this.headers
+        }
+        return this.adapter.request(url, _options)
             .catch(error => {
-                if(error.code === 209){
+                if (error.code === 209) {
                     this.cache.clear();
                 }
                 throw error;
             });
     }
 }
+
 module.exports = RestController;

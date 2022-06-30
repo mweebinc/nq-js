@@ -1,38 +1,39 @@
 const getRestController = require('../controllers');
 
-class Collection{
+class Collection {
     constructor() {
         this.rest = getRestController();
     }
 
-    testFunction(){
-        console.log('hello from collection')
-    }
-
-    create(schema){
+    create(schema) {
         const options = {
-            body : schema
+            body: schema
         }
         return this.rest.request('POST', '/schemas', options);
     };
-    update(schema){
+
+    update(schema) {
         const path = '/schemas/' + schema.name
         const options = {
-            body : schema
+            body: schema
         }
         return this.rest.request('PUT', path, options);
     }
-    find(schemaId){
+
+    find(schemaId) {
         const path = '/schemas/' + schemaId
         return this.rest.request('GET', path)
     }
-    delete(schemaName){
+
+    delete(schemaName) {
         const path = '/schemas/' + schemaName
         return this.rest.request('DELETE', path);
     }
-    findAll(){
+
+    findAll() {
         const path = '/schemas'
         return this.rest.request('GET', path);
     }
 }
+
 module.exports = Collection;
