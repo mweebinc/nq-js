@@ -1,10 +1,4 @@
-// import XhrAdapter from './XhrAdapter';
-const  XhrAdapter = require('./XhrAdapter')
-const GetLocalStorageAdapter = require("../../cache/local/index");
-const UserCache = require('../../../data/user/source/UserCache');
-
-const memoryAdapter = new GetLocalStorageAdapter(NaN)
-const userCache = new UserCache(memoryAdapter)
+const XhrAdapter = require('./XhrAdapter')
 
 function getXhrAdapter() {
     let XHR = null;
@@ -13,8 +7,7 @@ function getXhrAdapter() {
     } else {
         throw new Error('XMLHttpRequest was found.');
     }
-    return new XhrAdapter(XHR, userCache);
+    return new XhrAdapter(XHR);
 }
 
-// export default getXhrAdapter;
 module.exports = getXhrAdapter

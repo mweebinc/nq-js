@@ -1,42 +1,41 @@
 const getController = require('../controllers')
+const ENDPOINT = '/classes/'
 
 class Document {
-    //index tawagin si Document(?)
     constructor() {
         this.rest = getController();
     }
-    //dito implementation ng rest controller
-    //i-specify yung request POST, GET, UPDATE, DELETE
 
-    testFunction(){
-        console.log('hello from document')
-    }
-
-    create(collection, document){
-        const path = '/classes/' + collection
+    create(collection, document) {
+        const path = ENDPOINT + collection
         const options = {
-            body : document
+            body: document
         }
         return this.rest.request('POST', path, options)
     }
-    update(collection, document){
-        const path = '/classes/' + collection + '/' + document.id
+
+    update(collection, document) {
+        const path = ENDPOINT + collection + '/' + document.id
         const options = {
-            body : document
+            body: document
         }
         return this.rest.request('PUT', path, options);
     }
-    find(collection, documentId){
-        const path = '/classes/' + collection + '/' + documentId;
-        return this.rest.request('GET', path)
-    }
-    delete(collection, documentId){
-        const path = '/classes/' + collection + '/' + documentId
+
+    delete(collection, id) {
+        const path = ENDPOINT + collection + '/' + id
         return this.rest.request('DELETE', path)
     }
-    findAll(collection){
-        const path = '/classes/' + collection
+
+    get(collection, id) {
+        const path = ENDPOINT + collection + '/' + id;
+        return this.rest.request('GET', path)
+    }
+
+    find(collection) {
+        const path = ENDPOINT + collection
         return this.rest.request('GET', path);
     }
 }
+
 module.exports = Document;

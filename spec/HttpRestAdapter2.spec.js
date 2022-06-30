@@ -1,4 +1,7 @@
 const http = require('http');
+const appId = '6560588f36297abd70cb7433774d5e09';
+const masterKey = '43600a5f650ed69e3391ccdf271332d437f4026e';
+const contentType = 'application/json';
 const getHttpRestAdapter = require('../src/adapters/rest/http');
 
 const adapter = getHttpRestAdapter();

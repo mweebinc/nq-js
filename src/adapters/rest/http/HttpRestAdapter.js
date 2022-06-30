@@ -1,10 +1,11 @@
-class HttpRestAdapter{
+class HttpRestAdapter {
     constructor(http) {
         this.http = http
     }
-    request(url, options){
+
+    request(url, options = {}) {
         return new Promise((resolve, reject) => {
-            if(this.http === null){
+            if (this.http === null) {
                 throw new Error('Cannot make a request. No HTTP Request found.')
             }
             const http = this.http
@@ -14,9 +15,12 @@ class HttpRestAdapter{
                     chunks.push(chunk);
                 })
                 res.on('end', () => {
-                    this.body = Buffer.concat(chunks).toString();
-                    const jsonBody = JSON.parse(this.body);
-                    resolve(jsonBody);
+                    const body = Buffer.concat(chunks).toString();
+                    try {
+                        resolve(JSON.parse(body));
+                    } catch (error) {
+                        reject(error);
+                    }
                 })
                 res.on('error', (error) => {
                     reject(error);
@@ -27,4 +31,5 @@ class HttpRestAdapter{
         });
     }
 }
+
 module.exports = HttpRestAdapter;
