@@ -1,4 +1,5 @@
 const Config = require('../Config');
+const SESSION_KEY = 'session';
 
 class RestController {
     constructor(adapter, cache) {
@@ -7,18 +8,18 @@ class RestController {
     }
 
     getSession() {
-        this.cache.get('token')
+        return this.cache.get(SESSION_KEY)
             .then((session) => {
                 this.session = session;
             })
     }
 
     setSession(session) {
-        this.cache.set({'token': session});
+        return this.cache.put(SESSION_KEY, session);
     }
 
     clearSession() {
-        this.cache.clear()
+        return this.cache.clear()
     }
 
     setAppId() {
@@ -35,7 +36,7 @@ class RestController {
         this.headers['Content-Type'] = 'application/json';
         this.headers['X-Application-Id'] = this.appId;
         if (this.session) {
-            this.headers['X-Session-Token'] = this.session.token
+            this.headers['X-Session-Token'] = this.session;
         }
     }
 
@@ -49,7 +50,7 @@ class RestController {
 
     request(method, path, options = {}) {
         if (options && options.body) {
-            if(typeof options.body === 'object'){
+            if (typeof options.body === 'object') {
                 options.body = JSON.stringify(options.body);
             }
         }

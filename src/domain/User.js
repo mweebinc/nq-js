@@ -27,11 +27,10 @@ class User {
         const options = {
             body: user
         }
-
         return this.rest.request('POST', '/signin', options)
             .then(response => {
-                this.rest.setSession(response.sessionToken)
-                return response;
+                return this.rest.setSession(response.sessionToken)
+                // return response;
             })
     }
 
@@ -44,8 +43,18 @@ class User {
         return this.rest.request('POST', '/reset/', options);
     }
 
-    get() {
+    getCurrentUser() {
         return this.rest.request('GET', '/me');
+    }
+
+    static signIn(user) {
+        const _user = new this();
+        return _user.signIn(user);
+    }
+
+    static getCurrentUser() {
+        const user = new this();
+        return user.getCurrentUser();
     }
 }
 
