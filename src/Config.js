@@ -1,6 +1,7 @@
 const config = {
-    SERVER_URL: 'api.innque.com/v1',
+    SERVER_URL: 'https//api.innque.com/v1',
     APPLICATION_ID: null,
+    LIVEQUERY_SERVER_URL: 'wss//api.innque.com/v1',
 }
 
 const Config = {
