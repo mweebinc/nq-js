@@ -6,77 +6,69 @@ class RestController {
         this.adapter = adapter;
         this.cache = cache;
     }
-
-    getSession() {
-        return this.cache.get(SESSION_KEY)
-            .then((session) => {
-                this.session = session;
-            })
+    getSession(session) {
+        this.cache.get(SESSION_KEY)
+            .then((_session) => {
+                this.session = session || _session;
+            });
     }
-
     setSession(session) {
-        return this.cache.put(SESSION_KEY, session);
+        this.cache.put(SESSION_KEY, session);
     }
-
     clearSession() {
         return this.cache.clear()
     }
-
-    setAppId() {
+    getAppId() {
         this.appId = Config.get('APPLICATION_ID');
     }
-
-    getUrl(path) {
+    getUrl(method, path, body) {
         const base = Config.get('SERVER_URL');
-        return new URL(base + path);
+        const url = new URL(base + path);
+        if (method === 'GET' && body) {
+            for (const p in body) {
+                url.searchParams.set(p, JSON.stringify(body[p]));
+            }
+        }
+        return url;
     }
 
-    writeHeader() {
-        this.headers = {};
-        this.headers['Content-Type'] = 'application/json';
+    writeHeader(headers) {
+        this.headers = headers || {};
+        this.headers['Content-Type'] = this.contentType;
         this.headers['X-Application-Id'] = this.appId;
         if (this.session) {
             this.headers['X-Session-Token'] = this.session;
         }
     }
 
-    init(path) {
-        return Promise.resolve()
-            .then(() => this.setAppId())
-            .then(() => this.getSession())
-            .then(() => this.writeHeader())
-            .then(() => this.getUrl(path));
+    getContentType(body) {
+        this.contentType = 'application/json';
     }
 
-    request(method, path, options = {}) {
-        if (options && options.body) {
-            if (typeof options.body === 'object') {
-                options.body = JSON.stringify(options.body);
-            }
+    getBody(body) {
+        if (body && typeof body === 'object') {
+            return JSON.stringify(body);
         }
+    }
+    request(method, path, options = {}, session) {
         return Promise.resolve()
-            .then(() => this.init(path))
-            .then((url) => this.send(url, {method, ...options}));
+            .then(() => this.getAppId())
+            .then(() => this.getSession(session))
+            .then(() => this.getContentType(options.body))
+            .then(() => this.writeHeader(options.headers))
+            .then(() => this.getUrl(method, path, options.body))
+            .then((url) => this._request(url, method, options.body));
     }
 
-    send(url, options) {
-        if (options.query) {
-            for (const p in options.query) {
-                url.searchParams.set(p, JSON.stringify(options.query[p]));
-            }
-        }
-        if (options.headers) {
-            this.headers = Object.assign(this.headers, options.headers)
-        }
-        if (options.session) {
-            this.headers['X-Session-Token'] = options.session;
-        }
-        const _options = {
-            method: options.method,
-            body: options.body,
+    _request(url, method, body) {
+        const options = {
+            method: method,
             headers: this.headers
+        };
+        if (options.method === 'POST' && body) {
+            options.body = this.getBody(body);
         }
-        return this.adapter.request(url, _options)
+        return this.adapter.request(url, options)
             .catch(error => {
                 if (error.code === 209) {
                     this.cache.clear();

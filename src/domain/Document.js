@@ -32,9 +32,14 @@ class Document {
         return this.rest.request('GET', path)
     }
 
-    find(collection) {
-        const path = ENDPOINT + collection
-        return this.rest.request('GET', path);
+    find(collection, query, session) {
+        const path = ENDPOINT + collection;
+        return this.rest.request('GET', path, {body: query}, session);
+    }
+
+    static find(collection, query, session) {
+        const document = new this();
+        return document.find(collection, query, session);
     }
 }
 
