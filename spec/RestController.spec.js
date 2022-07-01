@@ -24,7 +24,7 @@ describe('RestController', () => {
         };
         restController = new RestController(restAdapter, cacheAdapter);
     });
-    
+
     it('should GET request', function (done) {
         const method = 'GET';
         const path = '/collections';
@@ -38,6 +38,24 @@ describe('RestController', () => {
                         'X-Application-Id': 'test'
                     }
                 );
+                done();
+            })
+            .catch(done.fail);
+    });
+    it('should add query in GET request', function (done) {
+        const method = 'GET';
+        const path = '/collections';
+        const options = {
+            body: {
+                where: {name: 'john', age: 28},
+                include: ['all']
+            }
+        }
+        restController.request(method, path, options)
+            .then((result) => {
+                expect(result.url.search).toEqual('?where=%7B%22name%22%3A%22john%22%2C%22age%22%3A28%7D&include=%5B%22all%22%5D');
+                expect(result.options.method).toEqual('GET');
+                expect(result.options.body).toBeUndefined();
                 done();
             })
             .catch(done.fail);
