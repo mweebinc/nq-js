@@ -1,4 +1,4 @@
-const RestController = require('../src/controllers/RestController');
+const RestController = require('../src/controllers/rest/RestController');
 const Config = require('../src/Config');
 
 Config.set('SERVER_URL', 'http://api.innque.com/v1');

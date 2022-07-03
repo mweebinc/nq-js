@@ -1,7 +1,8 @@
+// global data
 const config = {
-    SERVER_URL: 'https//api.innque.com/v1',
-    APPLICATION_ID: null,
-    LIVEQUERY_SERVER_URL: 'wss//api.innque.com/v1',
+    SERVER_URL: 'https://api.innque.com/v1',
+    APPLICATION_ID: 'appid',
+    LIVEQUERY_SERVER_URL: 'ws://localhost:5683',
 }
 
 const Config = {

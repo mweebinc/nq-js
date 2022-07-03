@@ -1,4 +1,4 @@
-const getController = require('../controllers')
+const getController = require('../controllers/rest')
 const ENDPOINT = '/classes/'
 
 class Document {
@@ -6,12 +6,12 @@ class Document {
         this.rest = getController();
     }
 
-    create(collection, document) {
+    create(collection, document, session) {
         const path = ENDPOINT + collection
         const options = {
             body: document
         }
-        return this.rest.request('POST', path, options)
+        return this.rest.request('POST', path, options, session)
     }
 
     update(collection, document) {
@@ -40,6 +40,11 @@ class Document {
     static find(collection, query, session) {
         const document = new this();
         return document.find(collection, query, session);
+    }
+
+    static create(collection, document, session) {
+        const _document = new this();
+        return _document.create(collection, document, session);
     }
 }
 

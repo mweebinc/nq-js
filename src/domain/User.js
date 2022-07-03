@@ -1,4 +1,4 @@
-const getRestController = require('../controllers');
+const getRestController = require('../controllers/rest');
 
 class User {
     constructor() {
