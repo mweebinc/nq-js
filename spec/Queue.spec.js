@@ -1,7 +1,7 @@
-const fields = require('../src/domain/schema/default/fields')
-const permissions = require('../src/domain/schema/default/permissions')
-const Queue = require('../src/Queue');
-const Config = require('../src/Config');
+// const fields = require('../src/domain/schema/default/fields')
+// const permissions = require('../src/domain/schema/default/permissions')
+// const Queue = require('../src/Queue');
+// const Config = require('../src/Config');
 
 //new tests
 xdescribe('global config', function(){
@@ -10,8 +10,8 @@ xdescribe('global config', function(){
     const masterKey = '43600a5f650ed69e3391ccdf271332d437f4026e';
     const url = 'http://localhost/v1';
 
-    Queue.setUrl(url);
-    Queue.setApplicationId(appid);
+    // Queue.setUrl(url);
+    // Queue.setApplicationId(appid);
 
     xit('should get properties', function(done){
         expect(Config.get('APPLICATION_ID')).toEqual(appid);
@@ -367,7 +367,7 @@ describe('Users', function(){
             .catch(done.fail)
 
     });
-    it('invalid session token', function (done) {
+    xit('invalid session token', function (done) {
         const userQueue = new Queue.User();
 
         const user = {

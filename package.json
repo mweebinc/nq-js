@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "events": "^3.3.0",
+    "ws": "^8.8.0"
   },
   "devDependencies": {
     "jasmine": "^4.1.0"
