@@ -5,8 +5,8 @@ function getRestController() {
     let cacheAdapter;
 
     if (window) {
-        const getXhrAdapter = require('../adapters/rest/xhr');
-        const getCacheAdapter = require('../adapters/cache/local');
+        const getXhrAdapter = require('../../adapters/rest/xhr');
+        const getCacheAdapter = require('../../adapters/cache/local');
         restAdapter = getXhrAdapter();
         cacheAdapter = getCacheAdapter(NaN);
     } else {

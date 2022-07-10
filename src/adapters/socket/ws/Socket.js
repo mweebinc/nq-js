@@ -8,9 +8,10 @@ class Socket extends EventEmitter {
         super();
         this.url = url;
     }
+
     open() {
         this.ws = new WebSocket(this.url);
-        this.ws.on('open', () => this.emit('open'));
+        this.ws.onopen = () => this.emit('open');
         this.ws.onmessage = message => {
             message = message && message.data ? message.data : message;
             try {

@@ -6,21 +6,26 @@ class RestController {
         this.adapter = adapter;
         this.cache = cache;
     }
+
     getSession(session) {
         this.cache.get(SESSION_KEY)
             .then((_session) => {
                 this.session = session || _session;
             });
     }
+
     setSession(session) {
         this.cache.put(SESSION_KEY, session);
     }
+
     clearSession() {
         return this.cache.clear()
     }
+
     getAppId() {
         this.appId = Config.get('APPLICATION_ID');
     }
+
     getUrl(method, path, body) {
         const base = Config.get('SERVER_URL');
         const url = new URL(base + path);
@@ -32,41 +37,38 @@ class RestController {
         return url;
     }
 
-    writeHeader(headers) {
-        this.headers = headers || {};
-        this.headers['Content-Type'] = this.contentType;
-        this.headers['X-Application-Id'] = this.appId;
+    getDefaultHeaders() {
+        const headers = {};
+        headers['Content-Type'] = 'application/json';
+        headers['X-Application-Id'] = this.appId;
         if (this.session) {
-            this.headers['X-Session-Token'] = this.session;
+            headers['X-Session-Token'] = this.session;
         }
+        return headers;
     }
 
-    getContentType(body) {
-        this.contentType = 'application/json';
-    }
-
-    getBody(body) {
+    transformBody(body) {
         if (body && typeof body === 'object') {
             return JSON.stringify(body);
         }
+        return body;
     }
+
     request(method, path, options = {}, session) {
         return Promise.resolve()
             .then(() => this.getAppId())
             .then(() => this.getSession(session))
-            .then(() => this.getContentType(options.body))
-            .then(() => this.writeHeader(options.headers))
             .then(() => this.getUrl(method, path, options.body))
-            .then((url) => this._request(url, method, options.body));
+            .then((url) => this._request(url, method, options.body, options.headers));
     }
 
-    _request(url, method, body) {
+    _request(url, method, body, headers) {
         const options = {
             method: method,
-            headers: this.headers
+            headers: Object.assign(this.getDefaultHeaders(), headers)
         };
         if (options.method === 'POST' && body) {
-            options.body = this.getBody(body);
+            options.body = this.transformBody(body);
         }
         return this.adapter.request(url, options)
             .catch(error => {

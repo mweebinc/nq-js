@@ -98,4 +98,25 @@ describe('RestController', () => {
             })
             .catch(done.fail);
     });
+    it('should custom header', function (done) {
+        const method = 'POST';
+        const path = '/files/';
+        const options = {
+            body: 'hello',
+            headers: {
+                'Content-Type':'text/plain'
+            }
+        };
+        restController.request(method, path, options)
+            .then((result) => {
+                expect(result.options.headers).toEqual({
+                        'Content-Type': 'text/plain',
+                        'X-Application-Id': 'test'
+                    }
+                );
+                expect(result.options.body).toEqual('hello');
+                done();
+            })
+            .catch(done.fail);
+    });
 });

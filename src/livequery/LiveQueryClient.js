@@ -45,31 +45,27 @@ class LiveQueryClient extends EventEmitter {
         this.sessionToken = sessionToken;
         this.subscriptions = new Map();// list of Subscription class
         this.subscriptionId = 1;
-        this.connectPromise = promise();
         this.state = STATE.INITIALIZED;
+        // Bind WebSocket callbacks
+        this.socket.on('open', this._pushAuthentication.bind(this));
+        this.socket.on('message', this._onMessage.bind(this));
+        this.socket.on('close', this._onClose.bind(this));
+        this.socket.on('error', this._onError.bind(this));
         // prevent Unhandled error
         this.on('error', () => {
         });
     }
 
     open() {
+        if (this.connectPromise) {
+            return this.connectPromise;
+        }
         if (this.state !== STATE.RECONNECTING) {
             this.state = STATE.CONNECTING;
         }
-        // Bind WebSocket callbacks
-        this.socket.on('open', () => {
-            this._pushAuthentication();
-        });
-        this.socket.on('message', (data) => {
-            this._onMessage(data);
-        });
-        this.socket.on('close', () => {
-            this._onClose();
-        });
-        this.socket.on('error', (error) => {
-            this._onError(error);
-        });
+        this.connectPromise = promise();
         setTimeout(() => this.socket.open());
+        return this.connectPromise;
     }
 
     subscribe(query) {
@@ -81,7 +77,7 @@ class LiveQueryClient extends EventEmitter {
         const subscription = new Subscription(this.subscriptionId, query);
         this.subscriptions.set(this.subscriptionId, subscription);
         this.subscriptionId++;
-        this.connectPromise
+        this.open()
             .then(() => this.socket.send(data));
         return subscription;
     }
