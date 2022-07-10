@@ -1,4 +1,4 @@
-const getController = require('../controllers/rest')
+const getController = require('../controllers/rest');
 const ENDPOINT = '/classes/'
 
 class Document {

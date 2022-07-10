@@ -7,8 +7,9 @@ class Subscription extends EventEmitter {
         this.query = query;
         this.subscribed = false;
     }
+
     unsubscribe() {
-        setTimeout(() => this.emit('unsubscribe'),100);
+        setTimeout(() => this.emit('unsubscribe'), 100);
     }
 }
 
