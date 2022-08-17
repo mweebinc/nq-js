@@ -12,6 +12,16 @@ class Collection {
         return this.rest.request('POST', '/schemas', options);
     };
 
+    get(name) {
+        const path = '/schemas/' + name
+        return this.rest.request('GET', path)
+    }
+
+    find() {
+        const path = '/schemas'
+        return this.rest.request('GET', path);
+    }
+
     update(schema) {
         const path = '/schemas/' + schema.name
         const options = {
@@ -20,20 +30,38 @@ class Collection {
         return this.rest.request('PUT', path, options);
     }
 
-    find(schemaId) {
-        const path = '/schemas/' + schemaId
-        return this.rest.request('GET', path)
-    }
-
-    delete(schemaName) {
-        const path = '/schemas/' + schemaName
+    delete(name) {
+        const path = '/schemas/' + name
         return this.rest.request('DELETE', path);
     }
 
-    findAll() {
-        const path = '/schemas'
-        return this.rest.request('GET', path);
+
+    static create(schema) {
+        const collection = new this();
+        return collection.create(schema);
     }
+
+    static get(name) {
+        const collection = new this();
+        return collection.get(name);
+    }
+
+    static find() {
+        const collection = new this();
+        return collection.find();
+    }
+
+    static update(schema) {
+        const collection = new this();
+        return collection.update(schema);
+    }
+
+    static delete(name) {
+        const collection = new this();
+        return collection.delete(name);
+    }
+
+
 }
 
 module.exports = Collection;

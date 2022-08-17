@@ -47,11 +47,13 @@ class RestController {
         return headers;
     }
 
-    transformBody(body) {
-        if (body && typeof body === 'object') {
-            return JSON.stringify(body);
+    transformBody(body, type) {
+        switch (type) {
+            case 'application/json':
+                return JSON.stringify(body);
+            default:
+                return body;
         }
-        return body;
     }
 
     request(method, path, options = {}, session) {
@@ -67,8 +69,9 @@ class RestController {
             method: method,
             headers: Object.assign(this.getDefaultHeaders(), headers)
         };
-        if (options.method === 'POST' && body) {
-            options.body = this.transformBody(body);
+        // body data only allowed in POST and PUT method
+        if (body && options.method === 'POST' || options.method === 'PUT') {
+            options.body = this.transformBody(body, options.headers['Content-Type']);
         }
         return this.adapter.request(url, options)
             .catch(error => {

@@ -1,8 +1,8 @@
 // global data
 const config = {
-    SERVER_URL: 'http://165.232.167.26:8888/v1',
+    SERVER_URL: 'https://api.mweeb.com/v1',
     APPLICATION_ID: '6560588f36297abd70cb7433774d5e09',
-    LIVEQUERY_SERVER_URL: 'ws://165.232.167.26:8888',
+    LIVEQUERY_SERVER_URL: 'wss://api.mweeb.com/',
 }
 
 const Config = {

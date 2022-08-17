@@ -9,6 +9,7 @@ class Queue {
     static setUrl(value) {
         Config.set('SERVER_URL', value);
     }
+
     static setApplicationId(value) {
         Config.set('APPLICATION_ID', value);
     }
