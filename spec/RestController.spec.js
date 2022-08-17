@@ -79,6 +79,25 @@ describe('RestController', () => {
             })
             .catch(done.fail);
     });
+    it('should PUT request', function (done) {
+        const method = 'PUT';
+        const path = '/collections';
+        const body = {name: 'john'};
+        const options = {body};
+        restController.request(method, path, options)
+            .then((result) => {
+                expect(result.url.href).toEqual('http://api.innque.com/v1/collections');
+                expect(result.options.method).toEqual('PUT');
+                expect(result.options.body).toEqual(JSON.stringify(body));
+                expect(result.options.headers).toEqual({
+                        'Content-Type': 'application/json',
+                        'X-Application-Id': 'test'
+                    }
+                );
+                done();
+            })
+            .catch(done.fail);
+    });
     it('should request POST multiple', function (done) {
         const method = 'POST';
         const path1 = '/users';

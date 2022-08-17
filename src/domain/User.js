@@ -5,24 +5,12 @@ class User {
         this.rest = getRestController()
     }
 
-    signOut() {
-        return this.rest.request('POST', '/signout')
-            .then(response => {
-                this.rest.clearSession();
-                return response;
-            })
-            .catch(() => {
-                this.rest.clearSession();
-            })
-    }
-
     signUp(user) {
         const options = {
             body: user
         }
         return this.rest.request('POST', '/signup', options)
     }
-
     signIn(user) {
         const options = {
             body: user
@@ -33,7 +21,19 @@ class User {
                 // return response;
             })
     }
-
+    getCurrentUser() {
+        return this.rest.request('GET', '/me');
+    }
+    signOut() {
+        return this.rest.request('POST', '/signout')
+            .then(response => {
+                this.rest.clearSession();
+                return response;
+            })
+            .catch(() => {
+                this.rest.clearSession();
+            })
+    }
     resetPassword(user) {
         const options = {
             body: {
@@ -42,11 +42,10 @@ class User {
         }
         return this.rest.request('POST', '/reset/', options);
     }
-
-    getCurrentUser() {
-        return this.rest.request('GET', '/me');
+    static signUp(user) {
+        const _user = new this();
+        return _user.signUp(user);
     }
-
     static signIn(user) {
         const _user = new this();
         return _user.signIn(user);
@@ -55,6 +54,14 @@ class User {
     static getCurrentUser() {
         const user = new this();
         return user.getCurrentUser();
+    }
+    static signOut() {
+        const user = new this();
+        return user.signOut();
+    }
+    static resetPassword(user) {
+        const _user = new this();
+        return _user.resetPassword(user);
     }
 }
 
