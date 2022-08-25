@@ -54,31 +54,31 @@ inside the Queue object there's multiple sub object
 
 ## Object
 
-save object
+#### save object
 
 ```
 Queue.Document.create(collection, object);
 ```
 
-get object
+#### get object
 
 ```
 Queue.Document.get(collection, id);
 ```
 
-find object
+#### find object
 
 ```
 Queue.Document.find(collection, query);
 ```
 
-update object
+#### update object
 
 ```
 Queue.Document.update(collection, object);
 ```
 
-delete object
+#### delete object
 
 ```
 Queue.Document.delete(collection, id);
@@ -177,7 +177,56 @@ const query = {include:['address.user']}
 ```
 
 ### sort
-if you want to sort the objects by its key, by default the query is sort ascending then if you want to sort descending 
+
+if you want to sort the objects by its key, by default the query is sort ascending then if you want to sort descending
+
 ```
 const query = {createdAt: -1}
+```
+
+## User
+
+user object has functionality to interact current user signup user
+
+#### sign-up user
+
+```
+const user = {email:'john@gmail.com',password:'pass123$'};
+Queue.User.signup(user);
+```
+
+#### sign-in user
+
+```
+const user = {email:'john@gmail.com',password:'pass123$'};
+Queue.User.signin(user);
+```
+
+#### get current user
+
+```
+Queue.User.getCurrentUser();
+```
+
+#### sign-out user
+
+```
+Queue.User.signOut();
+```
+
+#### reset password of the user
+
+```
+const email = 'john@gmail.com';
+Queue.User.resetPassword(email);
+```
+
+## File
+
+file use native blob to save a file
+
+#### save file
+
+```
+Queue.File.save(blob);
 ```
