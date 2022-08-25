@@ -18,8 +18,7 @@ class User {
         return this.rest.request('POST', '/signin', options)
             .then(response => {
                 return this.rest.setSession(response.sessionToken)
-                // return response;
-            })
+            });
     }
     getCurrentUser() {
         return this.rest.request('GET', '/me');
