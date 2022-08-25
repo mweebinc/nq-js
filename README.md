@@ -97,15 +97,36 @@ a query is an object with multiple options
 
 ### where
 
-where is an object specify the key and value of the object for example if you want to find users with firstName equal to
-john
+where is an object specify the exact match of the key and the value of the object.
+
+for example if you want to find users with firstName equal to john
 
 ```
 const query = {where:{firstName:'john'}}
 ```
 
-you can use wildcard query by specifying regex to the value for example if you want to find users with the starting
-firstName equal to Jo
+besides, exact matching where support other type of comparisons
+
+* $regex - Requires that a key’s value match a regular expression
+* $lt - Less Than
+* $lte - Less Than Or Equal To
+* $gt - Greater Than
+* $gte - Greater Than Or Equal To
+* $ne - Not Equal To
+* $in - Contained In
+* $nin - Not Contained in
+* $exists - A value is set for the key
+* $select - This matches a value for a key in the result of a different query
+* $dontSelect - Requires that a key’s value not match a value for a key in the result of a different query
+* $all - Contains all of the given values
+* $text - Performs a full text search on indexed fields
+* $or - Performs a full text search on indexed fields
+
+#### $regex
+
+a common use of regex is a query of wildcard value.
+
+for example if you want to find users with the starting firstName equal to Jo
 
 ```
 const query = {where:{firstName:{$regex:'Jo',$options:'i'}}}
@@ -115,8 +136,9 @@ $options:i means ignore case
 
 ### where or
 
-if you want to find objects with or operation for example if you want to find users with fistName equal to john or
-lastName equal to doe the syntax is $or with array of queries
+if you want to find objects with match one of several queries.
+
+example if you want to find users with fistName equal to john or lastName equal to doe.
 
 ```
 const query = {where:$or:[{firstName:'john'},{lastName:'doe'}]}
