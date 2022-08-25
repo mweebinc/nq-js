@@ -11,6 +11,7 @@ class User {
         }
         return this.rest.request('POST', '/signup', options)
     }
+
     signIn(user) {
         const options = {
             body: user
@@ -20,9 +21,11 @@ class User {
                 return this.rest.setSession(response.sessionToken)
             });
     }
+
     getCurrentUser() {
         return this.rest.request('GET', '/me');
     }
+
     signOut() {
         return this.rest.request('POST', '/signout')
             .then(response => {
@@ -33,18 +36,21 @@ class User {
                 this.rest.clearSession();
             })
     }
-    resetPassword(user) {
+
+    resetPassword(email) {
         const options = {
             body: {
-                email: user.email
+                email: email
             }
         }
         return this.rest.request('POST', '/reset/', options);
     }
+
     static signUp(user) {
         const _user = new this();
         return _user.signUp(user);
     }
+
     static signIn(user) {
         const _user = new this();
         return _user.signIn(user);
@@ -54,10 +60,12 @@ class User {
         const user = new this();
         return user.getCurrentUser();
     }
+
     static signOut() {
         const user = new this();
         return user.signOut();
     }
+
     static resetPassword(user) {
         const _user = new this();
         return _user.resetPassword(user);
