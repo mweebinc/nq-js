@@ -26,12 +26,17 @@ class RestController {
         this.appId = Config.get('APPLICATION_ID');
     }
 
-    getUrl(method, path, body) {
+    getUrl(method, path, body, params) {
         const base = Config.get('SERVER_URL');
         const url = new URL(base + path);
         if (method === 'GET' && body) {
             for (const p in body) {
                 url.searchParams.set(p, JSON.stringify(body[p]));
+            }
+        }
+        if (params) {
+            for (const p in params) {
+                url.searchParams.set(p, JSON.stringify(params[p]));
             }
         }
         return url;
@@ -60,7 +65,7 @@ class RestController {
         return Promise.resolve()
             .then(() => this.getAppId())
             .then(() => this.getSession(session))
-            .then(() => this.getUrl(method, path, options.body))
+            .then(() => this.getUrl(method, path, options.body, options.params))
             .then((url) => this._request(url, method, options.body, options.headers));
     }
 

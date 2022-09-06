@@ -64,7 +64,9 @@ describe('RestController', () => {
         const method = 'POST';
         const path = '/collections';
         const body = {name: 'john'};
-        const options = {body};
+        const options = {
+            body
+        };
         restController.request(method, path, options)
             .then((result) => {
                 expect(result.url.href).toEqual('http://api.innque.com/v1/collections');
@@ -123,7 +125,7 @@ describe('RestController', () => {
         const options = {
             body: 'hello',
             headers: {
-                'Content-Type':'text/plain'
+                'Content-Type': 'text/plain'
             }
         };
         restController.request(method, path, options)
@@ -134,6 +136,29 @@ describe('RestController', () => {
                     }
                 );
                 expect(result.options.body).toEqual('hello');
+                done();
+            })
+            .catch(done.fail);
+    });
+
+    it('should add query in PUT request', function (done) {
+        const method = 'PUT';
+        const path = '/collections';
+        const body = {name: 'john'};
+        const options = {
+            body,
+            params: {upsert: true}
+        };
+        restController.request(method, path, options)
+            .then((result) => {
+                expect(result.url.href).toEqual('http://api.innque.com/v1/collections?upsert=true');
+                expect(result.options.method).toEqual('PUT');
+                expect(result.options.body).toEqual(JSON.stringify(body));
+                expect(result.options.headers).toEqual({
+                        'Content-Type': 'application/json',
+                        'X-Application-Id': 'test'
+                    }
+                );
                 done();
             })
             .catch(done.fail);

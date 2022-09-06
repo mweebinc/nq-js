@@ -24,12 +24,13 @@ class Document {
         return this.rest.request('GET', path, {body: query}, session);
     }
 
-    update(collection, document, session) {
+    update(collection, document, options, session) {
         const path = ENDPOINT + collection + '/' + document.id
-        const options = {
-            body: document
+        const _options = {
+            body: document,
+            params: options
         }
-        return this.rest.request('PUT', path, options, session);
+        return this.rest.request('PUT', path, _options, session);
     }
 
     delete(collection, id, session) {
