@@ -97,7 +97,8 @@ a query is an object with multiple options
 
 ### where
 
-where is an object specify the exact match of the key and the value of the object.
+where is an object specify the exact match of the key and the value of the object.\
+{key:value}
 
 for example if you want to find users with firstName equal to john
 
@@ -105,7 +106,10 @@ for example if you want to find users with firstName equal to john
 const query = {where:{firstName:'john'}}
 ```
 
-besides, exact matching where support other type of comparisons
+besides, exact matching where support other type of comparisons.\
+{key:{$operation:value}}
+
+Operation &nbsp; &nbsp; &nbsp; Meaning
 
 * $regex - Requires that a key’s value match a regular expression
 * $lt - Less Than
@@ -120,7 +124,6 @@ besides, exact matching where support other type of comparisons
 * $dontSelect - Requires that a key’s value not match a value for a key in the result of a different query
 * $all - Contains all of the given values
 * $text - Performs a full text search on indexed fields
-* $or - Performs a full text search on indexed fields
 
 #### $regex
 
