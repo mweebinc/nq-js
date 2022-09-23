@@ -6,13 +6,13 @@ class Email {
     }
 
     verify(email, session) {
-        const path = '/verify/';
+        const path = '/email/verify/';
         const options = {
             body: {email: email}
         }
         return this.rest.request('POST', path, options, session)
     }
-    
+
     static verify(email, session) {
         const _ = new this();
         return _.verify(email, session);
