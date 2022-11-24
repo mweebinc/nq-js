@@ -11,7 +11,6 @@ class Socket extends EventEmitter {
     }
 
     open() {
-        console.log("new open");
         this.ws = new WebSocket(this.url);
         this.ws.onopen = () => {
             this.waitingForPong = false;
@@ -19,7 +18,6 @@ class Socket extends EventEmitter {
             // send ping to client periodically
             // if no pong within in time interval socket will be disconnected
             const pingIntervalId = setInterval(() => {
-                console.log("waitingForPong");
                 if (!this.waitingForPong) {
                     this.ws.send('ping');
                     this.waitingForPong = true;

@@ -69,7 +69,6 @@ class LiveQueryClient extends EventEmitter {
     }
 
     subscribe(query) {
-        console.log("subscribe");
         const data = {
             operation: OP_TYPES.SUBSCRIBE,
             subscriptionId: this.subscriptionId,
@@ -84,7 +83,6 @@ class LiveQueryClient extends EventEmitter {
     }
 
     unsubscribe(subscription) {
-        console.log("unsubscribe");
         if (subscription) {
             subscription.subscribed = false;
             const data = {
@@ -97,7 +95,6 @@ class LiveQueryClient extends EventEmitter {
     }
 
     close() {
-        console.log("close");
         if (this.state === STATE.INITIALIZED || this.state === STATE.DISCONNECTED) {
             return;
         }
@@ -160,7 +157,6 @@ class LiveQueryClient extends EventEmitter {
     }
 
     _onClose() {
-        console.log("_onClose");
         if (this.state === STATE.DISCONNECTED) {
             return;
         }
@@ -189,7 +185,6 @@ class LiveQueryClient extends EventEmitter {
     }
 
     _reconnect() {
-        console.log("_reconnect");
         // if closed or currently reconnecting we stop attempting to reconnect
         if (this.state === STATE.DISCONNECTED) {
             return;
