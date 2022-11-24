@@ -15,7 +15,6 @@ const Client = (function () {
         client.on('close', () => LiveQuery.emit('close'));
         return client;
     }
-
     return {
         getInstance: function () {
             if (!instance) {
