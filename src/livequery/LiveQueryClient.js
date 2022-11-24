@@ -69,6 +69,7 @@ class LiveQueryClient extends EventEmitter {
     }
 
     subscribe(query) {
+        console.log("subscribe");
         const data = {
             operation: OP_TYPES.SUBSCRIBE,
             subscriptionId: this.subscriptionId,
@@ -83,6 +84,7 @@ class LiveQueryClient extends EventEmitter {
     }
 
     unsubscribe(subscription) {
+        console.log("unsubscribe");
         if (subscription) {
             subscription.subscribed = false;
             const data = {
@@ -95,6 +97,7 @@ class LiveQueryClient extends EventEmitter {
     }
 
     close() {
+        console.log("close");
         if (this.state === STATE.INITIALIZED || this.state === STATE.DISCONNECTED) {
             return;
         }
@@ -125,6 +128,8 @@ class LiveQueryClient extends EventEmitter {
             case OP_EVENTS.CONNECTED:
                 this.connectPromise.resolve();
                 this.emit(CLIENT_EMITTER_TYPES.OPEN);
+                this.state = STATE.CONNECTED;
+                this._resubscribe();
                 break;
             case OP_EVENTS.SUBSCRIBED:
                 if (subscription) {
@@ -136,6 +141,11 @@ class LiveQueryClient extends EventEmitter {
                 }
                 break;
             case OP_EVENTS.ERROR:
+                this.emit(CLIENT_EMITTER_TYPES.ERROR, data.error);
+                if (!this.id) {
+                    this.connectPromise.reject(data);
+                    this.state = STATE.DISCONNECTED;
+                }
                 break;
             case OP_EVENTS.UNSUBSCRIBED:
                 this.subscriptions.delete(subscription.id);
@@ -147,10 +157,10 @@ class LiveQueryClient extends EventEmitter {
                     setTimeout(() => subscription.emit(data.operation, data.document));
                 }
         }
-
     }
 
     _onClose() {
+        console.log("_onClose");
         if (this.state === STATE.DISCONNECTED) {
             return;
         }
@@ -179,6 +189,7 @@ class LiveQueryClient extends EventEmitter {
     }
 
     _reconnect() {
+        console.log("_reconnect");
         // if closed or currently reconnecting we stop attempting to reconnect
         if (this.state === STATE.DISCONNECTED) {
             return;
@@ -187,11 +198,23 @@ class LiveQueryClient extends EventEmitter {
         if (this.reconnectTimeoutId) {
             clearTimeout(this.reconnectTimeoutId);
         }
-        // reconnect every 1 second
+        // reconnect every 5 second
         this.reconnectTimeoutId = setTimeout(() => {
-            this.connectPromise = promise();
+            this.connectPromise = undefined;
             this.open();
-        }, 1000);
+        }, 3000);
+    }
+
+    _resubscribe() {
+        this.subscriptions.forEach((subscription, subscriptionId) => {
+            const data = {
+                operation: OP_TYPES.SUBSCRIBE,
+                subscriptionId: subscriptionId,
+                query: subscription.query
+            }
+            this.connectPromise
+                .then(() => this.socket.send(data));
+        });
     }
 }
 
