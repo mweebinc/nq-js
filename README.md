@@ -255,3 +255,4 @@ file use native blob to save a file
 ```
 Queue.File.save(blob);
 ```
+The installationId field is optional. InstallationId is a identifier for a device. It can be used for monitoring.
