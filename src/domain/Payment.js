@@ -6,10 +6,9 @@ class Payment {
     }
 
     makePayment(transaction, session) {
-         console.log('make payment use case');
         const path = '/paynamics/make';
         const options = {
-            body: transaction
+            body: transaction.request_id
         }
         return this.rest.request('POST', path, options, session)
     }
