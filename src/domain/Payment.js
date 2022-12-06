@@ -8,7 +8,7 @@ class Payment {
     makePayment(transaction, session) {
         const path = '/paynamics/make';
         const options = {
-            body: transaction.request_id
+            body: {id : transaction.request_id}
         }
         return this.rest.request('POST', path, options, session)
     }
