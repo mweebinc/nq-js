@@ -1,6 +1,13 @@
 const EventEmitter = require('events');
 
+/**
+ * The model of each client subscription
+ */
 class Subscription extends EventEmitter {
+    /**
+     * @param id the sequence number subscription ID of the client
+     * @param query @type {{collection: string,where: {}}}
+     */
     constructor(id, query) {
         super();
         this.id = id;
@@ -8,12 +15,18 @@ class Subscription extends EventEmitter {
         this.subscribed = false;
     }
 
+    /**
+     * Unsubscribe to event
+     */
     unsubscribe() {
-        setTimeout(() => this.emit('unsubscribe'), 100);
+        this.emit('unsubscribe');
     }
 }
 
-// The event the LiveQuery subscription should emit
+/**
+ * The event the LiveQuery subscription should emit
+ * @type {string}
+ */
 Subscription.SUBSCRIBE = 'subscribe';
 Subscription.CREATE = 'create';
 Subscription.UPDATE = 'update';

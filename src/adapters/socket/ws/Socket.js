@@ -1,21 +1,28 @@
 const EventEmitter = require('events');
 
 /**
- * wrapper class for WebSocket Client
+ * Wrapper class for WebSocket Client
  */
 class Socket extends EventEmitter {
+    /**
+     * @param url The WebSocket Server
+     * @param timeout The timeout ping pong
+     */
     constructor(url, timeout = 10) {
         super();
         this.url = url;
         this.timeout = timeout;
     }
 
+    /**
+     * Open new connection
+     */
     open() {
         this.ws = new WebSocket(this.url);
         this.ws.onopen = () => {
             this.waitingForPong = false;
             // heartbeat
-            // send ping to client periodically
+            // send ping to server periodically
             // if no pong within in time interval socket will be disconnected
             const pingIntervalId = setInterval(() => {
                 if (!this.waitingForPong) {
@@ -46,6 +53,10 @@ class Socket extends EventEmitter {
         this.ws.onerror = (error) => this.emit('error', error);
     }
 
+    /**
+     * Send JSON data
+     * @param data @type {{}}
+     */
     send(data) {
         try {
             data = JSON.stringify(data);
@@ -56,6 +67,9 @@ class Socket extends EventEmitter {
         this.ws.send(data);
     }
 
+    /**
+     * Close the connection
+     */
     close() {
         this.ws.close();
     }
