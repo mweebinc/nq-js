@@ -3,6 +3,10 @@ const getLiveQueryClient = require('./');
 const Config = require('../Config');
 
 
+/**
+ * Create single istance of the client
+ * @type {{getInstance: (function(): LiveQueryClient)}}
+ */
 const Client = (function () {
     let instance;
 
@@ -15,6 +19,7 @@ const Client = (function () {
         client.on('close', () => LiveQuery.emit('close'));
         return client;
     }
+
     return {
         getInstance: function () {
             if (!instance) {
@@ -25,7 +30,10 @@ const Client = (function () {
     };
 })();
 
-
+/**
+ * The static object for LiveQuery features
+ * @type {EventEmitter}
+ */
 const LiveQuery = new EventEmitter();
 
 

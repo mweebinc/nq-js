@@ -1,3 +1,7 @@
+/**
+ * Create a promise variable
+ * @returns {Promise<>}
+ */
 function promise() {
     let resolve;
     let reject;
