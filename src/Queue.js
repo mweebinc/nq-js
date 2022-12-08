@@ -3,6 +3,7 @@ const Document = require('./domain/Document');
 const User = require('./domain/User');
 const File = require('./domain/File');
 const Email = require('./domain/Email');
+const Payment = require('./domain/Payment')
 const Config = require('./Config');
 const LiveQuery = require('./livequery/LiveQuery');
 
@@ -22,4 +23,5 @@ Queue.Document = Document;
 Queue.LiveQuery = LiveQuery;
 Queue.File = File;
 Queue.Email = Email;
+Queue.Payment = Payment;
 module.exports = Queue;
