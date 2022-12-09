@@ -46,6 +46,10 @@ class LiveQueryConnection extends EventEmitter {
      * Open the connection
      */
     open() {
+        // prevent to call open again
+        if (this.state === STATE.CONNECTING || this.state === STATE.CONNECTED) {
+            return;
+        }
         // change current state to connecting
         if (this.state !== STATE.RECONNECTING) {
             this.state = STATE.CONNECTING;

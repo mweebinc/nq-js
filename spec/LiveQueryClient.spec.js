@@ -109,7 +109,7 @@ describe('LiveQueryClient', function () {
         const subscription = client.subscribe(query, Promise.resolve());
         subscription.subscribed = true;
         subscription.on('close', () => {
-            expect(subscription.subscribed).toBeFalse();
+            expect(subscription.subscribed).toBeTrue();
             done();
         });
         client.close();

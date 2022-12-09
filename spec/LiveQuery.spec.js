@@ -1,6 +1,7 @@
 const Config = require('../src/Config');
 const http = require('http');
 WebSocket = require('ws');
+const LiveQuery = require('../src/livequery/LiveQuery');
 
 const port = 5683;
 const url = 'ws://localhost:' + port;
@@ -8,7 +9,6 @@ const applicationId = 'appId';
 Config.set('LIVEQUERY_SERVER_URL', url);
 Config.set('APPLICATION_ID', applicationId);
 
-const LiveQuery = require('../src/livequery/LiveQuery');
 
 class SocketServer {
     constructor(server) {
@@ -45,9 +45,7 @@ class SocketServer {
                         {
                             operation: 'create',
                             subscriptionId: data.subscriptionId,
-                            document: {
-                                chat: 'test'
-                            }
+                            object: data.query.where
                         }
                     ));
                     break;
@@ -62,7 +60,6 @@ class SocketServer {
             }
         }
     }
-
     _onError(error) {
         console.log(error);
     }
@@ -75,6 +72,7 @@ beforeAll((done) => {
     wss.start()
         .then(done);
 });
+
 describe('LiveQuery', function () {
     it('should open event', function (done) {
         LiveQuery.on('open', () => {
@@ -90,41 +88,61 @@ describe('LiveQuery', function () {
     });
     it('should subscribe', function (done) {
         const query = {
-            collection: 'messages',
+            collection: 'chats',
             where: {
-                chat: 'test'
+                message: 'test'
             }
         }
         const subscription = LiveQuery.subscribe(query);
+        expect(subscription.id).toEqual(1);
+        expect(subscription.subscribed).toBeFalse();
+        expect(subscription.query).toEqual(query);
         subscription.on('subscribe', () => {
+            expect(subscription.subscribed).toBeTrue();
             done();
         });
-
+        LiveQuery.on('error', (error) => {
+            done.fail(error);
+        });
+        LiveQuery.on('close', () => {
+            done.fail('connection closed');
+        });
+        LiveQuery.open();
     });
     it('should subscribe to create', function (done) {
         const query = {
-            collection: 'messages',
+            collection: 'chats',
             where: {
-                chat: 'test'
+                message: 'test'
             }
         }
         const subscription = LiveQuery.subscribe(query);
-        subscription.on('create', (document) => {
-            expect(document.chat).toEqual('test');
+        expect(subscription.query).toEqual(query);
+        subscription.on('create', (data) => {
+            expect(data).toEqual(query.where);
             done();
         });
+        LiveQuery.open();
     });
-    it('should un subscribe', function (done) {
+    it('should unsubscribe', function (done) {
         const query = {
-            collection: 'messages',
+            collection: 'chats',
             where: {
-                chat: 'test'
+                message: 'test'
             }
         }
         const subscription = LiveQuery.subscribe(query);
-        subscription.on('close', () => {
-            done();
+        const subscription2 = LiveQuery.subscribe(query);
+        expect(subscription.query).toEqual(query);
+        subscription.on('subscribe', () => {
+            subscription.unsubscribe();
         });
-        subscription.unsubscribe();
+        subscription.on('close', () => {
+            LiveQuery.unsubscribe(subscription2);
+        })
+        subscription2.on('close', () => {
+            done();
+        })
+        LiveQuery.open();
     });
 });
