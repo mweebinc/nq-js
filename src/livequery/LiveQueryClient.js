@@ -14,9 +14,14 @@ class LiveQueryClient {
         this.ws = ws;
         this.sessionToken = sessionToken;
         /**
-         * @type {Map<number, Subscription>}
+         * @type {Map<string, Subscription>}
          */
         this.subscriptions = new Map();
+        /**
+         * Use number for autoincrement
+         * Then convert to string when used
+         * @type {number}
+         */
         this.subscriptionId = 1;
     }
 
@@ -41,14 +46,14 @@ class LiveQueryClient {
      * @returns {Subscription}
      */
     subscribe(query, connectionPromise) {
+        const subscription = new Subscription(this.subscriptionId, query);
+        this.subscriptions.set(subscription.id, subscription);
+        this.subscriptionId++;
         const data = {
             operation: 'subscribe',
-            subscriptionId: this.subscriptionId,
+            subscriptionId: subscription.id,
             query: query
         };
-        const subscription = new Subscription(this.subscriptionId, query);
-        this.subscriptions.set(this.subscriptionId, subscription);
-        this.subscriptionId++;
         connectionPromise.then(() => this.ws.send(data));
         // when subscription call the unsubscribe function
         subscription.on('unsubscribe', () => this.unsubscribe(subscription, connectionPromise));
