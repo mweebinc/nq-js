@@ -10,7 +10,7 @@ class Subscription extends EventEmitter {
      */
     constructor(id, query) {
         super();
-        this.id = id;
+        this.id = id + '';// make sure id is string
         this.query = query;
         this.subscribed = false;
     }

@@ -36,10 +36,10 @@ describe('LiveQueryClient', function () {
         const ws = {
             send: function (data) {
                 expect(data.operation).toEqual('subscribe');
-                expect(data.subscriptionId).toEqual(id);
+                expect(data.subscriptionId).toEqual(id + '');
                 expect(data.query).toEqual(query);
                 id++;
-                if (data.subscriptionId === 3) {
+                if (data.subscriptionId === '3') {
                     done();
                 }
             }
@@ -48,9 +48,9 @@ describe('LiveQueryClient', function () {
         const subscription1 = client.subscribe(query, Promise.resolve());
         const subscription2 = client.subscribe(query, Promise.resolve());
         const subscription3 = client.subscribe(query, Promise.resolve());
-        expect(subscription1.id).toEqual(1);
-        expect(subscription2.id).toEqual(2);
-        expect(subscription3.id).toEqual(3);
+        expect(subscription1.id).toEqual('1');
+        expect(subscription2.id).toEqual('2');
+        expect(subscription3.id).toEqual('3');
         expect(subscription1).toBeInstanceOf(EventEmitter);
         expect(subscription1.subscribed).toBeFalse();
         expect(subscription1.query).toEqual(query);
@@ -77,7 +77,7 @@ describe('LiveQueryClient', function () {
         const ws = {
             send: function (data) {
                 expect(data.operation).toEqual('subscribe');
-                expect(data.subscriptionId).toEqual(id);
+                expect(data.subscriptionId).toEqual(id + '');
                 expect(data.query).toEqual(query);
                 id++;
                 count++;
@@ -101,7 +101,7 @@ describe('LiveQueryClient', function () {
         const ws = {
             send: function (data) {
                 expect(data.operation).toEqual('subscribe');
-                expect(data.subscriptionId).toEqual(1);
+                expect(data.subscriptionId).toEqual('1');
                 expect(data.query).toEqual(query);
             }
         };
