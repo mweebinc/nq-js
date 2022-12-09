@@ -1,23 +1,30 @@
 const EventEmitter = require('events');
-const getLiveQueryClient = require('./');
 const Config = require('../Config');
-
+const Socket = require('../adapters/socket/ws/Socket');
+const LiveQueryConnection = require('./LiveQueryConnection');
+/**
+ * The static object for LiveQuery features
+ * @type {EventEmitter}
+ */
+const LiveQuery = new EventEmitter();
 
 /**
- * Create single istance of the client
- * @type {{getInstance: (function(): LiveQueryClient)}}
+ * Create single instance of the Connection
+ * @type {{getInstance: (function(): LiveQueryConnection)}}
  */
-const Client = (function () {
+const Connection = (function () {
     let instance;
 
     function createInstance() {
         const url = Config.get('LIVEQUERY_SERVER_URL') || Config.get('SERVER_URL').replace('http', 'ws');
         const applicationId = Config.get('APPLICATION_ID');
-        const client = getLiveQueryClient(url, applicationId);
-        client.on('open', () => setTimeout(() => LiveQuery.emit('open'), 100));
-        client.on('error', (error) => setTimeout(() => LiveQuery.emit('error', error), 100));
-        client.on('close', () => LiveQuery.emit('close'));
-        return client;
+        // @todo token to be implemented
+        const token = Config.get('APPLICATION_ID');
+        const connection = new LiveQueryConnection(applicationId, new Socket(url));
+        connection.on('open', () => LiveQuery.emit('open'));
+        connection.on('error', (error) => LiveQuery.emit('error', error));
+        connection.on('close', () => LiveQuery.emit('close'));
+        return connection;
     }
 
     return {
@@ -31,19 +38,35 @@ const Client = (function () {
 })();
 
 /**
- * The static object for LiveQuery features
- * @type {EventEmitter}
+ * Static open function
  */
-const LiveQuery = new EventEmitter();
-
-
 LiveQuery.open = () => {
-    const client = Client.getInstance();
-    client.open();
+    const connection = Connection.getInstance();
+    connection.open();
 };
+/**
+ * Static subscribe function
+ * @param query
+ * @returns {*}
+ */
 LiveQuery.subscribe = (query) => {
-    const client = Client.getInstance();
-    return client.subscribe(query);
+    const connection = Connection.getInstance();
+    return connection.subscribe(query);
+};
+/**
+ * Static unsubscribe function
+ * @param subcription
+ */
+LiveQuery.unsubscribe = (subcription) => {
+    const connection = Connection.getInstance();
+    connection.unsubscribe(subcription);
+};
+/**
+ * Static close function
+ */
+LiveQuery.close = () => {
+    const connection = Connection.getInstance();
+    connection.close();
 };
 
 
