@@ -1,37 +1,11 @@
 # NQ JS
 
-> nq-js is a library for nq-api to use rest API in javascript almost all functionality used Promise
+nq-js is a client side Javascript library of nq-api. nq-api has two protocol are used the HTTP and the Socket protocol.
+We use HTTP for saving and getting the data and Socket for realtime data like chat applications.
 
-## Technologies Used
+## Concept
 
-- XMLHttpRequest - version latest
-- ws - version 8.8.0
-
-## Installation
-
-first clone this package
-
-```
-git clone https://github.com/innqueinc/nq-js.git
-```
-
-then goto the folder
-
-```
-cd nq-js
-```
-
-link the project to your global dependency
-
-```
-npm link
-```
-
-install to your project
-
-```
-npm link nq
-```
+nq-api used a JSON format to send and receive the data.
 
 ## Usage
 
@@ -255,4 +229,53 @@ file use native blob to save a file
 ```
 Queue.File.save(blob);
 ```
+
+## LiveQuery
+
+Using the LiveQuery Module you can subscribe in a specific query when collection has changed. To use a LiveQuery
+features We call Live Query for WebSocket Protocol subscribe
+
+```javascript
+// your query you interested in.
+const query = {
+    collection: 'messages',
+    where: {}
+}
+// subscribe to the Event
+const subscription = Queue.LiveQuery.subscribe(query);
+// Open the connection
+Queue.LiveQuery.open();
+// when new object has been created then your query is match 
+// this even are triggered
+subscription.on('create', message => {
+
+});
+```
+
 The installationId field is optional. InstallationId is a identifier for a device. It can be used for monitoring.
+
+## Installation
+
+first clone this package
+
+```
+git clone https://github.com/innqueinc/nq-js.git
+```
+
+then goto the folder
+
+```
+cd nq-js
+```
+
+link the project to your global dependency
+
+```
+npm link
+```
+
+install to your project
+
+```
+npm link nq
+```
