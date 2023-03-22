@@ -86,7 +86,7 @@ describe('LiveQueryConnection', function () {
         let id = 1;
         ws.on('send', data => {
             if (data.operation === 'subscribe') {
-                expect(data.subscriptionId).toEqual(id);
+                expect(data.subscriptionId).toEqual(id + '');
                 expect(data.query).toEqual(query);
                 id++;
             }
@@ -95,7 +95,7 @@ describe('LiveQueryConnection', function () {
         const subscription = connection.subscribe(query);
         expect(subscription.subscribed).toBeFalse();
         subscription.on(Subscription.SUBSCRIBE, (data) => {
-            expect(data).toEqual({operation: 'subscribed', subscriptionId: 1});
+            expect(data).toEqual({operation: 'subscribed', subscriptionId: '1'});
             expect(subscription.subscribed).toBeTrue();
         });
         connection.open();
@@ -103,7 +103,7 @@ describe('LiveQueryConnection', function () {
         expect(subscription2.subscribed).toBeFalse();
         expect(connection.client.subscriptions.size).toEqual(2);
         subscription2.on(Subscription.SUBSCRIBE, (data) => {
-            expect(data).toEqual({operation: 'subscribed', subscriptionId: 2});
+            expect(data).toEqual({operation: 'subscribed', subscriptionId: '2'});
             expect(subscription2.subscribed).toBeTrue();
             done();
         });
@@ -135,7 +135,7 @@ describe('LiveQueryConnection', function () {
         let id = 2;
         ws.on('send', data => {
             if (data.operation === 'unsubscribe') {
-                expect(data.subscriptionId).toEqual(id);
+                expect(data.subscriptionId).toEqual(id + '');
                 id++;
             }
         });

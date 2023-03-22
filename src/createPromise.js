@@ -1,8 +1,8 @@
 /**
- * Create a promise variable
+ * Create a createPromise variable
  * @returns {Promise<>}
  */
-function promise() {
+function createPromise() {
     let resolve;
     let reject;
     const promise = new Promise((_resolve, _reject) => {
@@ -14,4 +14,4 @@ function promise() {
     return promise;
 }
 
-module.exports = promise;
+module.exports = createPromise;

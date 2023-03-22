@@ -5,7 +5,7 @@ const LiveQuery = require('../src/livequery/LiveQuery');
 
 const port = 5683;
 const url = 'ws://localhost:' + port;
-const applicationId = 'appId';
+const applicationId = 'test';
 Config.set('LIVEQUERY_SERVER_URL', url);
 Config.set('APPLICATION_ID', applicationId);
 
@@ -94,7 +94,7 @@ describe('LiveQuery', function () {
             }
         }
         const subscription = LiveQuery.subscribe(query);
-        expect(subscription.id).toEqual(1);
+        expect(subscription.id).toEqual('1');
         expect(subscription.subscribed).toBeFalse();
         expect(subscription.query).toEqual(query);
         subscription.on('subscribe', () => {

@@ -7,17 +7,13 @@ class File {
         this.rest = getController();
     }
 
-    save(blob, session) {
-        const options = {
-            'body': blob,
-            'headers': {'Content-Type': blob.type}
+    save(blob, options = {}) {
+        const _options = {
+            body: blob,
+            headers: {'Content-Type': blob.type},
+            progress: options.progress
         }
-        return this.rest.request('POST', ENDPOINT + blob.name, options, session);
-    }
-
-    static save(blob, session) {
-        const file = new this();
-        return file.save(blob, session);
+        return this.rest.request('POST', ENDPOINT + blob.name, _options, options.session);
     }
 
     static getFile(path) {

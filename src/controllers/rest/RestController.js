@@ -19,7 +19,7 @@ class RestController {
     }
 
     clearSession() {
-        return this.cache.clear()
+        return this.cache.delete(SESSION_KEY);
     }
 
     getAppId() {
@@ -66,19 +66,24 @@ class RestController {
             .then(() => this.getAppId())
             .then(() => this.getSession(session))
             .then(() => this.getUrl(method, path, options.body, options.params))
-            .then((url) => this._request(url, method, options.body, options.headers));
+            .then((url) => this._request(url, method, options));
     }
 
-    _request(url, method, body, headers) {
-        const options = {
+    abort() {
+        this.adapter.abort();
+    }
+
+    _request(url, method, options) {
+        const _options = {
             method: method,
-            headers: Object.assign(this.getDefaultHeaders(), headers)
+            headers: Object.assign(this.getDefaultHeaders(), options.headers),
+            progress: options.progress
         };
         // body data only allowed in POST and PUT method
-        if (body && options.method === 'POST' || options.method === 'PUT') {
-            options.body = this.transformBody(body, options.headers['Content-Type']);
+        if (options.body && _options.method === 'POST' || _options.method === 'PUT') {
+            _options.body = this.transformBody(options.body, _options.headers['Content-Type']);
         }
-        return this.adapter.request(url, options)
+        return this.adapter.request(url, _options)
             .catch(error => {
                 if (error.code === 209) {
                     this.cache.clear();

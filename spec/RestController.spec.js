@@ -1,17 +1,18 @@
 const RestController = require('../src/controllers/rest/RestController');
 const Config = require('../src/Config');
-
-Config.set('SERVER_URL', 'http://api.innque.com/v1');
-Config.set('APPLICATION_ID', 'test');
-
 describe('RestController', () => {
     let restAdapter;
     let cacheAdapter;
     let restController;
     beforeEach(() => {
+        Config.set('SERVER_URL', 'http://api.innque.com/v1');
+        Config.set('APPLICATION_ID', 'test');
         restAdapter = {
             request: jasmine.createSpy().and.callFake(function (url, options) {
                 return Promise.resolve({url, options});
+            }),
+            abort: jasmine.createSpy().and.callFake(function () {
+                return Promise.resolve();
             })
         };
         cacheAdapter = {
@@ -41,6 +42,24 @@ describe('RestController', () => {
                 done();
             })
             .catch(done.fail);
+    });
+    it('should support cancel request', function (done) {
+        const method = 'GET';
+        const path = '/collections';
+        restController.request(method, path)
+            .then((result) => {
+                expect(result.url.href).toEqual('http://api.innque.com/v1/collections');
+                expect(result.options.method).toEqual('GET');
+                expect(result.options.body).toBeUndefined();
+                expect(result.options.headers).toEqual({
+                        'Content-Type': 'application/json',
+                        'X-Application-Id': 'test'
+                    }
+                );
+                done();
+            })
+            .catch(done.fail);
+        restController.abort();
     });
     it('should add query in GET request', function (done) {
         const method = 'GET';
@@ -140,7 +159,6 @@ describe('RestController', () => {
             })
             .catch(done.fail);
     });
-
     it('should add query in PUT request', function (done) {
         const method = 'PUT';
         const path = '/collections';
@@ -159,6 +177,29 @@ describe('RestController', () => {
                         'X-Application-Id': 'test'
                     }
                 );
+                done();
+            })
+            .catch(done.fail);
+    });
+    it('should support progress', function (done) {
+        const method = 'PUT';
+        const path = '/collections';
+        const body = {name: 'john'};
+        const options = {
+            body: body,
+            params: {upsert: true},
+            progress: 'progress'
+        };
+        restController.request(method, path, options)
+            .then(() => {
+                const _url = new URL('http://api.innque.com/v1/collections?upsert=true');
+                const _options = {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json', 'X-Application-Id': 'test'},
+                    body: '{"name":"john"}',
+                    progress: 'progress'
+                }
+                expect(restAdapter.request).toHaveBeenCalledWith(_url, _options);
                 done();
             })
             .catch(done.fail);
