@@ -133,5 +133,5 @@ ParseError.FILE_READ_ERROR = 601;
 
 ParseError.X_DOMAIN_REQUEST = 602;
 
-// export default ParseError;
+// module.exports = ParseError;
 module.exports =  ParseError;

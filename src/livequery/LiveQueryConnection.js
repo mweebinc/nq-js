@@ -1,6 +1,6 @@
 const LiveQueryClient = require('./LiveQueryClient');
 const EventEmitter = require('events');
-const promise = require('../promise');
+const promise = require('../createPromise');
 const Subscription = require("./Subscription");
 
 /**

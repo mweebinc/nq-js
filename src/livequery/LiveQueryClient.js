@@ -19,7 +19,7 @@ class LiveQueryClient {
         this.subscriptions = new Map();
         /**
          * Use number for autoincrement
-         * Then convert to string when used
+         * Then convert to string when send to the server
          * @type {number}
          */
         this.subscriptionId = 1;
@@ -46,7 +46,7 @@ class LiveQueryClient {
      * @returns {Subscription}
      */
     subscribe(query, connectionPromise) {
-        const subscription = new Subscription(this.subscriptionId, query);
+        const subscription = new Subscription(this.subscriptionId + '', query);
         this.subscriptions.set(subscription.id, subscription);
         this.subscriptionId++;
         const data = {

@@ -5,12 +5,12 @@ const EventEmitter = require('events');
  */
 class Subscription extends EventEmitter {
     /**
-     * @param id the sequence number subscription ID of the client
+     * @param id a unique string subscription ID of the client
      * @param query @type {{collection: string,where: {}}}
      */
     constructor(id, query) {
         super();
-        this.id = id + '';// make sure id is string
+        this.id = id;
         this.query = query;
         this.subscribed = false;
     }

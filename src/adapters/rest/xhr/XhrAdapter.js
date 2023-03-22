@@ -1,13 +1,21 @@
-// import handleProgress from './handleProgress';
 const handleProgress = require('./handleProgress');
-// import resolvingPromise from './resolvingPromise';
 const resolvingPromise = require('./resolvingPromise')
 const ParseError = require('./ParseError')
-// import ParseError from './ParseError';
+
+const UNSENT = 0; // initial state
+const OPENED = 1; // open called
+const HEADERS_RECEIVED = 2; // response headers received
+const LOADING = 3; // response is loading (a data packet is received)
+const DONE = 4; // request complete
 
 class XhrAdapter {
-    constructor(XHR) {
+    /**
+     * @param XHR
+     * @param timeout 10second by default
+     */
+    constructor(XHR, timeout = 10000) {
         this.XHR = XHR;
+        this.timeout = timeout;
     }
 
     request(url, options) {
@@ -16,12 +24,7 @@ class XhrAdapter {
             throw new Error('Cannot make a request: No definition of XMLHttpRequest was found.');
         }
         const xhr = new this.XHR();
-        xhr.timeout = 10000; //10 seconds
-        const UNSENT = 0; // initial state
-        const OPENED = 1; // open called
-        const HEADERS_RECEIVED = 2; // response headers received
-        const LOADING = 3; // response is loading (a data packet is received)
-        const DONE = 4; // request complete
+        xhr.timeout = this.timeout;
         if (options.raw) {
             xhr.responseType = "blob";
         }
@@ -74,11 +77,11 @@ class XhrAdapter {
         for (const h in options.headers) {
             xhr.setRequestHeader(h, options.headers[h]);
         }
-        //send request
+        // send request
         xhr.send(options.body);
         return promise;
     }
 }
 
-// export default XhrAdapter;
+// module.exports = XhrAdapter;
 module.exports = XhrAdapter;
