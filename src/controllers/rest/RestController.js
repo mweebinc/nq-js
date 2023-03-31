@@ -1,5 +1,6 @@
 const Config = require('../../Config');
-const SESSION_KEY = 'session';
+const SESSION_KEY = 'SESSION';
+const APPLICATION_ID_KEY = 'APPLICATION_ID';
 
 class RestController {
     constructor(adapter, cache) {
@@ -23,7 +24,14 @@ class RestController {
     }
 
     getAppId() {
-        this.appId = Config.get('APPLICATION_ID');
+        this.cache.get(APPLICATION_ID_KEY)
+            .then((id) => {
+                this.appId = Config.get('APPLICATION_ID') || id;
+            });
+    }
+
+    setAppId(id) {
+        this.cache.put(APPLICATION_ID_KEY, id);
     }
 
     getUrl(method, path, body, params) {
@@ -61,11 +69,11 @@ class RestController {
         }
     }
 
-    request(method, path, options = {}, session) {
+    request(method, path, {params, ...options} = {}, session) {
         return Promise.resolve()
             .then(() => this.getAppId())
             .then(() => this.getSession(session))
-            .then(() => this.getUrl(method, path, options.body, options.params))
+            .then(() => this.getUrl(method, path, options.body, params))
             .then((url) => this._request(url, method, options));
     }
 
@@ -73,17 +81,17 @@ class RestController {
         this.adapter.abort();
     }
 
-    _request(url, method, options) {
-        const _options = {
+    _request(url, method, {headers, body, ...other}) {
+        const options = {
             method: method,
-            headers: Object.assign(this.getDefaultHeaders(), options.headers),
-            progress: options.progress
+            headers: Object.assign(this.getDefaultHeaders(), headers),
+            ...other
         };
         // body data only allowed in POST and PUT method
-        if (options.body && _options.method === 'POST' || _options.method === 'PUT') {
-            _options.body = this.transformBody(options.body, _options.headers['Content-Type']);
+        if (body && method === 'POST' || method === 'PUT') {
+            options.body = this.transformBody(body, options.headers['Content-Type']);
         }
-        return this.adapter.request(url, _options)
+        return this.adapter.request(url, options)
             .catch(error => {
                 if (error.code === 209) {
                     this.cache.clear();

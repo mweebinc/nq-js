@@ -204,4 +204,25 @@ describe('RestController', () => {
             })
             .catch(done.fail);
     });
+    it('should support raw data', function (done) {
+        const method = 'POST';
+        const path = '/export';
+        const options = {
+            raw: true,
+            headers: {'Content-Type': 'application/octet-stream'}
+        };
+        restController.request(method, path, options)
+            .then(() => {
+                const _url = new URL('http://api.innque.com/v1/export');
+                const _options = {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/octet-stream', 'X-Application-Id': 'test'},
+                    raw: true
+                }
+                expect(restAdapter.request).toHaveBeenCalledWith(_url, _options);
+                done();
+            })
+            .catch(done.fail);
+    });
+
 });
