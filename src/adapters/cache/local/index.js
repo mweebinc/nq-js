@@ -1,7 +1,7 @@
 const LocalStorageAdapter = require('./LocalStorageAdapter')
 
-function getCacheAdapter(ttl) {
-    return new LocalStorageAdapter(window.localStorage, ttl);
+function getCacheAdapter() {
+    return new LocalStorageAdapter(window.localStorage);
 }
 
 module.exports = getCacheAdapter;

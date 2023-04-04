@@ -1,33 +1,22 @@
+/**
+ * A class that provides a simple interface for storing and retrieving data in
+ * the browser's local storage.
+ */
 class LocalStorageAdapter {
-    constructor(localStorage, ttl = NaN) {
+    constructor(localStorage) {
         this.localStorage = localStorage;
-        this.ttl = ttl;
     }
-    put(key, value, ttl = this.ttl) {
-        if (ttl < 0 || isNaN(ttl)) {
-            ttl = NaN;
-        }
-        const record = {value: value, expire: Date.now() + ttl};
-        if (!isNaN(record.expire)) {
-            setTimeout(() => this.delete(key), ttl);
-        }
-        this.localStorage.setItem(key, JSON.stringify(record));
+
+    put(key, value) {
+        this.localStorage.setItem(key, value);
         return Promise.resolve();
     }
+
     get(key) {
-        let record = this.localStorage.getItem(key);
-        if (record == null) {
-            return Promise.resolve(record);
-        }
-        record = JSON.parse(record);
-        // Has Record and isn't expired
-        if (!record.expire || record.expire >= Date.now()) {
-            return Promise.resolve(record.value);
-        }
-        // Record has expired
-        this.delete(key);
-        return Promise.resolve(null);
+        const record = this.localStorage.getItem(key);
+        return Promise.resolve(record);
     }
+
     delete(key) {
         this.localStorage.removeItem(key);
         return Promise.resolve();
