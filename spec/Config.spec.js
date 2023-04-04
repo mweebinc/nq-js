@@ -4,6 +4,5 @@ describe('Config', function () {
         expect(() => Config.get('test')).toThrow(new Error('Configuration key not found.'));
         Config.set('test', 'value');
         expect(Config.get('test')).toEqual('value');
-        Config.get('APPLICATION_ID','test');
     });
 });
