@@ -26,7 +26,7 @@ class RestController {
     getAppId() {
         this.cache.get(APPLICATION_ID_KEY)
             .then((id) => {
-                this.appId = Config.get('APPLICATION_ID') || id;
+                this.appId = Config.get(APPLICATION_ID_KEY) || id;
             });
     }
 
