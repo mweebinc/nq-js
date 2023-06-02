@@ -14,7 +14,7 @@ class RestController {
                 this.session = session || _session;
             });
     }
-
+    
     setSession(session) {
         this.cache.put(SESSION_KEY, session);
     }
