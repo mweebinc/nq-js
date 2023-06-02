@@ -11,9 +11,9 @@ const DONE = 4; // request complete
 class XhrAdapter {
     /**
      * @param XHR
-     * @param timeout 10second by default
+     * @param timeout 20second by default
      */
-    constructor(XHR, timeout = 10000) {
+    constructor(XHR, timeout = 20000) {
         this.XHR = XHR;
         this.timeout = timeout;
     }
