@@ -24,7 +24,7 @@ class XhrAdapter {
             throw new Error('Cannot make a request: No definition of XMLHttpRequest was found.');
         }
         const xhr = new this.XHR();
-        xhr.timeout = this.timeout;
+        xhr.timeout = options.timeout || this.timeout;
         if (options.raw) {
             xhr.responseType = "blob";
         }
