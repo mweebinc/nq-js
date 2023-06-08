@@ -5,32 +5,46 @@ class Document {
     constructor() {
         this.rest = getController();
     }
-    create(collection, document, session) {
+
+    create(collection, document, options = {}) {
         const path = ENDPOINT + collection
-        const options = {
-            body: document
+        const _options = {
+            body: document,
+            timeout: options.timeout
         }
-        return this.rest.request('POST', path, options, session)
+        return this.rest.request('POST', path, _options)
     }
+
     get(collection, id) {
         const path = ENDPOINT + collection + '/' + id;
         return this.rest.request('GET', path)
     }
-    find(collection, query, session) {
+
+    find(collection, query, options = {}) {
         const path = ENDPOINT + collection;
-        return this.rest.request('GET', path, {body: query}, session);
+        const _options = {
+            body: query,
+            timeout: options.timeout
+        }
+        return this.rest.request('GET', path, _options);
     }
-    update(collection, document, options, session) {
+
+    update(collection, document, params, options = {}) {
         const path = ENDPOINT + collection + '/' + document.id
         const _options = {
             body: document,
-            params: options
+            params: params,
+            timeout: options.timeout
         }
-        return this.rest.request('PUT', path, _options, session);
+        return this.rest.request('PUT', path, _options);
     }
-    delete(collection, id, session) {
+
+    delete(collection, id, options = {}) {
         const path = ENDPOINT + collection + '/' + id
-        return this.rest.request('DELETE', path, {}, session);
+        const _options = {
+            timeout: options.timeout
+        }
+        return this.rest.request('DELETE', path, _options);
     }
 }
 
