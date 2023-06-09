@@ -14,7 +14,7 @@ class RestController {
                 this.session = session || _session;
             });
     }
-    
+
     setSession(session) {
         this.cache.put(SESSION_KEY, session);
     }
@@ -93,7 +93,7 @@ class RestController {
         }
         return this.adapter.request(url, options)
             .catch(error => {
-                if (error.code === 209) {
+                if (error.code === 401) {
                     this.cache.clear();
                 }
                 throw error;
