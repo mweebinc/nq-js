@@ -23,11 +23,19 @@ class User {
             });
     }
 
-    getCurrentUser() {
-        return this.rest.request('GET', '/me');
+    getCurrentUser(options = {}) {
+        const _options = {
+            timeout: options.timeout,
+            session: options.session
+        }
+        return this.rest.request('GET', '/me', _options);
     }
 
-    signOut() {
+    signOut(options = {}) {
+        const _options = {
+            timeout: options.timeout,
+            session: options.session
+        }
         return this.rest.request('POST', '/signout')
             .then(response => {
                 this.rest.clearSession();
@@ -38,13 +46,15 @@ class User {
             })
     }
 
-    resetPassword(email) {
-        const options = {
+    resetPassword(email, options) {
+        const _options = {
             body: {
-                email: email
+                email: email,
+                timeout: options.timeout,
+                session: options.session
             }
         }
-        return this.rest.request('POST', '/reset/', options);
+        return this.rest.request('POST', '/reset/', _options);
     }
 
 }
