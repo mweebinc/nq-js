@@ -69,7 +69,7 @@ class RestController {
         }
     }
 
-    request(method, path, {params, ...options} = {}, session) {
+    request(method, path, {params, session, ...options} = {}) {
         return Promise.resolve()
             .then(() => this.getAppId())
             .then(() => this.getSession(session))
@@ -93,6 +93,7 @@ class RestController {
         }
         return this.adapter.request(url, options)
             .catch(error => {
+                // if invalid session token
                 if (error.code === 401) {
                     this.cache.clear();
                 }
