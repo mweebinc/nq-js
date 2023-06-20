@@ -11,7 +11,7 @@ class User {
         }
         return this.rest.request('POST', '/signup', options)
     }
-
+    
     signIn(user) {
         const options = {
             body: user
