@@ -17,9 +17,14 @@ class Document {
         return this.rest.request('POST', path, _options)
     }
 
-    get(collection, id) {
+    get(collection, id, options = {}) {
         const path = ENDPOINT + collection + '/' + id;
-        return this.rest.request('GET', path)
+        const _options = {
+            params: options.params,
+            timeout: options.timeout,
+            session: options.session,
+        }
+        return this.rest.request('GET', path, _options);
     }
 
     find(collection, query, options = {}) {
@@ -32,11 +37,11 @@ class Document {
         return this.rest.request('GET', path, _options);
     }
 
-    update(collection, document, params, options = {}) {
+    update(collection, document, options = {}) {
         const path = ENDPOINT + collection + '/' + document.id
         const _options = {
             body: document,
-            params: params,
+            params: options.params,
             timeout: options.timeout,
             session: options.session,
         }
