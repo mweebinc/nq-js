@@ -95,7 +95,7 @@ class RestController {
             .catch(error => {
                 // if invalid session token
                 if (error.code === 401) {
-                    this.cache.clear();
+                    this.clearSession();
                 }
                 throw error;
             });
