@@ -1,5 +1,5 @@
 const getController = require('../controllers/rest');
-const ENDPOINT = '/classes/'
+const ENDPOINT = '/collections/'
 
 // Object has reserved keyword so we used Document instead
 class Document {
@@ -55,6 +55,25 @@ class Document {
             session: options.session
         }
         return this.rest.request('DELETE', path, _options);
+    }
+
+    aggregate(collection, pipeline, options = {}) {
+        const path = '/aggregate/' + collection;
+        const _options = {
+            body: {pipeline},
+            timeout: options.timeout,
+            session: options.session
+        }
+        return this.rest.request('GET', path, _options);
+    }
+
+    distinct(collection, field, query, options) {
+        const path = '/distinct/' + collection
+        const _options = {
+            timeout: options.timeout,
+            session: options.session
+        }
+        return this.rest.request('GET', path, _options);
     }
 }
 
