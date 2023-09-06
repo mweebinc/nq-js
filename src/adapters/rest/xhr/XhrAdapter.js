@@ -28,6 +28,7 @@ class XhrAdapter {
                 throw new Error('Cannot make a request: No definition of XMLHttpRequest was found.');
             }
             const xhr = new this.XHR();
+            this.currentXhr = xhr;
             xhr.timeout = options.timeout || this.timeout;
             if (options.raw) {
                 xhr.responseType = "blob";
@@ -71,7 +72,7 @@ class XhrAdapter {
                 };
             }
             xhr.onerror = function (e) {
-                console.error('error',e);
+                console.error('error', e);
                 retry(xhr);
             };
             xhr.onabort = function () {
@@ -106,7 +107,14 @@ class XhrAdapter {
         dispatch();
         return promise;
     }
+
+    abort() {
+        // cancel request
+        if (this.currentXhr) {
+            this.currentXhr.abort();
+            console.log("Request aborted");
+        }
+    }
 }
 
-// module.exports = XhrAdapter;
 module.exports = XhrAdapter;

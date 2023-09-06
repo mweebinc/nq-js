@@ -1,9 +1,61 @@
-// Function to find the difference between two arrays.
-function diff(a1, a2) {
-    // Concatenate the two arrays, then filter out only those items that appear once in the combined array
-    return a1.concat(a2).filter((val, index, arr) => {
-        return arr.indexOf(val) === arr.lastIndexOf(val);
-    });
+const salutations = ['mr', 'master', 'mister', 'mrs', 'miss', 'ms', 'dr', 'prof', 'rev', 'fr', 'judge', 'honorable', 'hon', 'tuan', 'sr', 'srta', 'br', 'pr', 'mx', 'sra'];
+const suffixes = ['i', 'ii', 'iii', 'iv', 'v', 'senior', 'junior', 'jr', 'sr', 'phd', 'apr', 'rph', 'pe', 'md', 'ma', 'dmd', 'cme', 'qc', 'kc'];
+const dotRegex = /\./g;
+const whitespaceRegex = /\s+/;
+
+// Compound Name Particles
+const compound = [
+    // Germanic origin
+    'von', 'van', 'vere',
+    // Latin origin
+    'de', 'del', 'dela', 'della', 'di', 'da', 'des',
+    // Dutch origin
+    'vanden', 'zum', 'zur',
+    // Spanish & Portuguese origin
+    'dos', 'das', 'y', 'o',
+    // Arabic origin
+    'bin', 'ibn', 'el', 'al',
+    // Italian origin
+    'pietro', 'la', 'lo', 'e',
+    // Other
+    'st.', 'st', 'ter', 'te', 'ten', 'op', 'ben', 'zu', 'im', 'un', 'une', 'le',
+    'mac', 'mc', 'ap', 'af', 'vel', 'd', 'of', 'am', 'auf', 'in', 'delos', 'der', 'den'
+];
+
+// This function handles compound middle names and updates the result object accordingly.
+function handleCompound2(parts, result, compound) {
+    const index = findIndex(parts, compound);
+    if (index !== -1) {
+        result.middleName = parts.splice(index).join(' ');
+    } else if (parts.length > 1) {
+        result.middleName = parts.pop();
+    }
+    result.firstName = parts.join(' ');
+}
+
+function handleCompound(parts, compounds) {
+    const accumulator = [];
+    let current = [];
+    for (let i = 0; i < parts.length; i++) {
+        const part = parts[i];
+        const len = parts.length;
+        const isLast = i === len - 1;
+        // if part is a compound, add current to accumulator
+        if (compounds.includes(part.toLowerCase())) {
+            if (current.length > 0) {
+                accumulator.push(current);
+            }
+            current = [part];
+        } else {
+            // add all part to the current
+            current.push(part);
+        }
+        // If this is the last part, finalize the current name
+        if (isLast && current.length > 0) {
+            accumulator.push(current);
+        }
+    }
+    return accumulator.map(accumulator => accumulator.join(' '));
 }
 
 // Function to check if a word is a suffix
@@ -11,154 +63,132 @@ function isSuffix(word, suffixes) {
     return suffixes.indexOf(word.toLowerCase().replace(dotRegex, '')) > -1;
 }
 
-// Function to generate the full name
-function generateFullName(attrs) {
-    const nameWords = [];
-    if (attrs.firstName) nameWords.push(attrs.firstName);
-    if (attrs.middleName) nameWords.push(attrs.middleName);
-    nameWords.push(attrs.lastName);
-    if (attrs.suffix) nameWords.push(attrs.suffix);
-    return nameWords.join(' ').trim();
+function findIndex(parts, variables) {
+    for (let i = 0; i < parts.length; i++) {
+        const word = parts[i];
+        if (variables.includes(word.toLowerCase().replace(dotRegex, ''))) return i;
+    }
+    return -1;
 }
 
-function handleLastNameFirstFormat(parts, attrs, suffixes) {
-    // Handling for "Last name, First name" format.
-    let firstNameIndex;// Initialize a variable to keep track of the index where the first name starts in the 'parts' array.
-    const lastName = parts.reduce((lastName, current, index) => {
-        if (!Array.isArray(lastName)) {
-            return lastName;
-        }
-        if (current.indexOf(',') === -1) {
-            lastName.push(current);
-            return lastName;
-        } else {
-            current = current.replace(',', '');
-            if (suffixes.indexOf(current.toLowerCase().replace(dotRegex, '')) > -1) {
-                attrs.suffix = current;
-            } else {
-                lastName.push(current);
-            }
-            firstNameIndex = index + 1;
-            return lastName.join(' ');
-        }
-    }, []);
-    // Use reduce to iterate through each part and build the last name.
-    attrs.lastName = lastName;
-    const remainingParts = parts.slice(firstNameIndex);
-    if (remainingParts.length > 1) {
-        attrs.firstName = remainingParts.shift();
-        attrs.middleName = remainingParts.join(' ');
-    } else if (remainingParts.length) {
-        attrs.firstName = remainingParts[0];
+// Function to handle the "FirstName MiddleName LastName" format
+function handleFirstNameFirst(name, result, compound) {
+    let parts = name.split(whitespaceRegex);
+    // check salutation
+    const i = findIndex(parts, salutations);
+    if (i > -1) {
+        result.salutation = parts[i].replace(dotRegex, '');
+        parts.splice(i, 1);  // Remove the salutation from parts
     }
-    attrs.fullName = generateFullName(attrs);
+    // check suffix
+    const j = findIndex(parts, suffixes);
+    if (j > -1) {
+        result.suffix = parts[j].replace(dotRegex, '');
+        parts.splice(j, 1);  // Remove the suffix from parts
+    }
+    // separate name has compound
+    parts = handleCompound(parts, compound);
+    // if no compound split again
+    if (parts.length === 1) {
+        parts = parts[0].split(whitespaceRegex);
+    }
+
+    // if the result only two
+    if (parts.length === 2) {
+        result.lastName = parts.pop();
+        parts = parts[0].split(whitespaceRegex);
+    }
+    // if the parts only 1 it mean it first name
+    if (parts.length === 1) {
+        result.firstName = parts[0];
+    }
+
+    // if length is only 2 again
+    if (parts.length === 2) {
+        result.firstName = parts.shift();
+        result.middleName = parts.shift();
+    }
+    if (parts.length === 3) {
+        result.firstName = parts[0];
+        result.middleName = parts[1];
+        result.lastName = parts[2];
+    }
+    if (parts.length > 3) {
+        result.lastName = parts.pop();
+        result.middleName = parts.pop();
+        result.firstName = parts.join(' ');
+    }
 }
 
-function handleFirstNameLastFormat(parts, attrs, salutations, compound, name) {
-    if (parts.length > 1 && salutations.indexOf(parts[0].toLowerCase().replace(dotRegex, '')) > -1) {
-        attrs.salutation = parts.shift();
-        if (parts.length === 1) {
-            attrs.lastName = parts.shift();
-        } else {
-            attrs.firstName = parts.shift();
-        }
-    } else {
-        attrs.firstName = parts.shift();
+
+// Function to handle the "LastName, FirstName MiddleName" format
+function handleLastNameFirst(name, result, compound) {
+    let parts = name.split(',').map(part => part.trim());
+    const lastNameParts = parts[0].split(whitespaceRegex);
+    // check suffix
+    const k = findIndex(lastNameParts, suffixes);
+    if (k > -1) {
+        result.suffix = lastNameParts[k].replace(dotRegex, '');
+        lastNameParts.splice(k, 1);  // Remove the suffix from parts
     }
-    if (!attrs.lastName) {
-        attrs.lastName = parts.length ? parts.pop() : '';
+    result.lastName = lastNameParts.join(' ');
+
+    parts = parts[1].split(whitespaceRegex);
+    // check salutation
+    const i = findIndex(parts, salutations);
+    if (i > -1) {
+        result.salutation = parts[i].replace(dotRegex, '');
+        parts.splice(i, 1);  // Remove the salutation from parts
     }
-    const revParts = parts.slice(0).reverse();
-    const compoundParts = [];
-    revParts.every(part => {
-        const test = part.toLowerCase().replace(dotRegex, '');
-        if (compound.indexOf(test) > -1) {
-            compoundParts.push(part);
-            return true;
-        }
-        return false;
-    });
-    if (compoundParts.length) {
-        attrs.lastName = compoundParts.reverse().join(' ') + ' ' + attrs.lastName;
-        parts = diff(parts, compoundParts);
+    // check suffix
+    const j = findIndex(parts, suffixes);
+    if (j > -1) {
+        result.suffix = parts[j].replace(dotRegex, '');
+        parts.splice(j, 1);  // Remove the suffix from parts
     }
-    if (parts.length) {
-        attrs.middleName = parts.join(' ');
+    parts = handleCompound(parts, compound);
+
+    if (parts.length === 1) {
+        parts = parts[0].split(whitespaceRegex);
     }
-    if (attrs.lastName) {
-        attrs.lastName = attrs.lastName.replace(',', '');
+    // only first name and middle name
+    if (parts.length === 2) {
+        result.firstName = parts[0];
+        result.middleName = parts[1];
     }
-    attrs.fullName = name;
 }
 
-// separate names into array
-function separateComponents(nameStr) {
-    // Match against the 'separateRegex' regular expression, or if that fails, split by whitespace
-    let parts = (nameStr.match(separateRegex) || nameStr.split(whitespaceRegex));
-    // If a part is enclosed in quotes, remove the quotes
-    parts = parts.map(n => n.match(enclosedInQuotesRegex) ? n.slice(1, -1) : n);
-    return parts;
-}
-
-// Regular expression for matching dots (periods)
-const dotRegex = /\./g;
-const commaSeparatedRegex = /\b,\b/;
-const separateRegex = /[^\s"]+|"[^"]+"/g;
-const extraSpaceBeforeCommaRegex = /\s+(?=,)/g;
-const enclosedInQuotesRegex = /^".*"$/;
-const whitespaceRegex = /\s+/;
 
 function parseName(name) {
-    // Define lists for salutations, suffixes, and compound parts of names.
-    const salutations = ['mr', 'master', 'mister', 'mrs', 'miss', 'ms', 'dr', 'prof', 'rev', 'fr', 'judge', 'honorable', 'hon', 'tuan', 'sr', 'srta', 'br', 'pr', 'mx', 'sra'];
-    const suffixes = ['i', 'ii', 'iii', 'iv', 'v', 'senior', 'junior', 'jr', 'sr', 'phd', 'apr', 'rph', 'pe', 'md', 'ma', 'dmd', 'cme', 'qc', 'kc'];
-    const compound = ['delos', 'vere', 'von', 'van', 'de', 'del', 'della', 'der', 'den', 'di', 'da', 'pietro', 'vanden', 'du', 'st.', 'st', 'la', 'lo', 'ter', 'bin', 'ibn', 'te', 'ten', 'op', 'ben', 'al'];
+    // default value
+    let result = {
+        firstName: "",
+        middleName: "",
+        lastName: "",
+        salutation: "",
+        suffix: ""
+    };
+    if (!name) {
+        // Handle null value, e.g., return default object or throw an error
+        return {
+            firstName: "",
+            middleName: "",
+            lastName: "",
+            salutation: "",
+            suffix: ""
+        };
+    }
     // Initial cleaning of the name string.
-    let parts = name
+    name = name
         .trim()// remove extra space at start and end
-        .replace(extraSpaceBeforeCommaRegex, '') // Remove extra spaces before commas.
-        .replace(commaSeparatedRegex, ', ')  // Add space after commas, if missing.
-    // Separate the name into its components.
-    parts = separateComponents(parts);
-    // Initialize an object to hold the parsed attributes.
-    const attrs = {};
-    // If no parts, return an empty object.
-    if (!parts.length) {
-        return attrs;
-    }
-    // If there's only one part, it's the first name.
-    if (parts.length === 1) {
-        attrs.firstName = parts[0];
-    }
-    //handle suffix first always, remove trailing comma if there is one
-    if (isSuffix(parts[parts.length - 1], suffixes)) {
-        attrs.suffix = parts.pop(); // remove and return the last element
-        parts[parts.length - 1] = parts[parts.length - 1].replace(',', '');
-    }
-    //look for a comma to know we have last name first format
-    // Determine if the name is in "First name Last name" or "Last name, First name" format.
-    const firstNameFirstFormat = parts.every(part => {
-        return part.indexOf(',') === -1;
-    });
 
-    if (!firstNameFirstFormat) {
-        handleLastNameFirstFormat(parts, attrs, suffixes);
+    if (name.includes(',')) {
+        handleLastNameFirst(name, result, compound);
     } else {
-        handleFirstNameLastFormat(parts, attrs, salutations, compound, name);
+        handleFirstNameFirst(name, result, compound);
     }
-
-    // Trim each attribute before returning.
-    for (const [k, v] of Object.entries(attrs)) {
-        attrs[k] = v.trim()
-    }
-    return attrs;
+    return result;
 }
 
-parseName.diff = diff;
-parseName.generateFullName = generateFullName;
-parseName.handleLastNameFirstFormat = handleLastNameFirstFormat;
-parseName.handleFirstNameLastFormat = handleFirstNameLastFormat;
 parseName.isSuffix = isSuffix;
-parseName.separateComponents = separateComponents;
 module.exports = parseName;
-

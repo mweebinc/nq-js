@@ -75,6 +75,10 @@ class Document {
         }
         return this.rest.request('GET', path, _options);
     }
+
+    abort() {
+        this.rest.abort();
+    }
 }
 
 module.exports = Document;
