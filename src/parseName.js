@@ -22,15 +22,23 @@ const compound = [
     'mac', 'mc', 'ap', 'af', 'vel', 'd', 'of', 'am', 'auf', 'in', 'delos', 'der', 'den'
 ];
 
-// This function handles compound middle names and updates the result object accordingly.
-function handleCompound2(parts, result, compound) {
-    const index = findIndex(parts, compound);
-    if (index !== -1) {
-        result.middleName = parts.splice(index).join(' ');
-    } else if (parts.length > 1) {
-        result.middleName = parts.pop();
+function spliceAtIndex(parts, index) {
+    if (index > -1) {
+        const [splicedElement] = parts.splice(index, 1);
+        return splicedElement.replace(/\./g, '');
     }
-    result.firstName = parts.join(' ');
+    return '';
+}
+
+function handleName(parts, result) {
+    const i = findIndex(parts, salutations);
+    if (i > -1) {
+        result.salutation = spliceAtIndex(parts, i);
+    }
+    const j = findIndex(parts, suffixes);
+    if (j > -1) {
+        result.suffix = spliceAtIndex(parts, j);
+    }
 }
 
 function handleCompound(parts, compounds) {
@@ -74,18 +82,7 @@ function findIndex(parts, variables) {
 // Function to handle the "FirstName MiddleName LastName" format
 function handleFirstNameFirst(name, result, compound) {
     let parts = name.split(whitespaceRegex);
-    // check salutation
-    const i = findIndex(parts, salutations);
-    if (i > -1) {
-        result.salutation = parts[i].replace(dotRegex, '');
-        parts.splice(i, 1);  // Remove the salutation from parts
-    }
-    // check suffix
-    const j = findIndex(parts, suffixes);
-    if (j > -1) {
-        result.suffix = parts[j].replace(dotRegex, '');
-        parts.splice(j, 1);  // Remove the suffix from parts
-    }
+    handleName(parts, result);
     // separate name has compound
     parts = handleCompound(parts, compound);
     // if no compound split again
@@ -132,22 +129,9 @@ function handleLastNameFirst(name, result, compound) {
         lastNameParts.splice(k, 1);  // Remove the suffix from parts
     }
     result.lastName = lastNameParts.join(' ');
-
     parts = parts[1].split(whitespaceRegex);
-    // check salutation
-    const i = findIndex(parts, salutations);
-    if (i > -1) {
-        result.salutation = parts[i].replace(dotRegex, '');
-        parts.splice(i, 1);  // Remove the salutation from parts
-    }
-    // check suffix
-    const j = findIndex(parts, suffixes);
-    if (j > -1) {
-        result.suffix = parts[j].replace(dotRegex, '');
-        parts.splice(j, 1);  // Remove the suffix from parts
-    }
+    handleName(parts, result);
     parts = handleCompound(parts, compound);
-
     if (parts.length === 1) {
         parts = parts[0].split(whitespaceRegex);
     }
