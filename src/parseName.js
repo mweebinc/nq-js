@@ -1,5 +1,42 @@
-const salutations = ['mr', 'master', 'mister', 'mrs', 'miss', 'ms', 'dr', 'prof', 'rev', 'fr', 'judge', 'honorable', 'hon', 'tuan', 'sr', 'srta', 'br', 'pr', 'mx', 'sra'];
-const suffixes = ['i', 'ii', 'iii', 'iv', 'v', 'senior', 'junior', 'jr', 'sr', 'phd', 'apr', 'rph', 'pe', 'md', 'ma', 'dmd', 'cme', 'qc', 'kc'];
+const salutations = [
+    'mr',      // Mister
+    'mrs',     // Mistress
+    'miss',    // Miss
+    'ms',      // Ms. (used when marital status is unknown or irrelevant)
+    'dr',      // Doctor (could be medical or academic)
+    'prof',    // Professor
+    // 'rev',     // Reverend (used for Christian clergy) disable because it has middle name has rev
+    'fr',      // Father (used for Catholic priests)
+    'atty',    // Attorney (used for lawyers)
+    'engr',    // Engineer
+    'arch',    // Architect
+    'judge',   // Judge
+    'honorable', // Honorable (used before names of judges or other dignitaries)
+    'hon',     // Short for Honorable
+    'br',      // Brother (used for members of some religious orders)
+    'pr',      // Pastor (used for Protestant clergy)
+    'mx'       // Mx. (gender-neutral honorific)
+];
+const suffixes = [
+    'jr',      // Junior
+    'sr',      // Senior
+    'ii',      // The Second
+    'iii',     // The Third
+    'iv',      // The Fourth
+    // 'v',       // The Fifth, currently disable due sometime has V. middle name
+    'vi',      // The Sixth
+    'vii',     // The Seventh
+    'viii',    // The Eighth
+    'ix',      // The Ninth
+    'phd',     // Doctor of Philosophy
+    'md',      // Medical Doctor
+    'rn',      // Registered Nurse
+    'esq',     // Esquire (used for attorneys in some English-speaking countries)
+    'dmd',     // Doctor of Dental Medicine
+    'cme',     // Continuing Medical Education (not typically a suffix, but I've included it based on your original list)
+    'qc',      // Queen's Counsel (used for senior barristers in the UK and other Commonwealth countries)
+    'kc'       // King's Counsel (historical equivalent of QC)
+];
 const dotRegex = /\./g;
 const whitespaceRegex = /\s+/;
 
@@ -35,6 +72,7 @@ function handleName(parts, result) {
     if (i > -1) {
         result.salutation = spliceAtIndex(parts, i);
     }
+
     const j = findIndex(parts, suffixes);
     if (j > -1) {
         result.suffix = spliceAtIndex(parts, j);
@@ -63,13 +101,14 @@ function handleCompound(parts, compounds) {
             accumulator.push(current);
         }
     }
-    return accumulator.map(accumulator => accumulator.join(' '));
+    parts = accumulator.map(accumulator => accumulator.join(' '));
+    // if no compound split again
+    if (parts.length === 1) {
+        parts = parts[0].split(whitespaceRegex);
+    }
+    return parts;
 }
 
-// Function to check if a word is a suffix
-function isSuffix(word, suffixes) {
-    return suffixes.indexOf(word.toLowerCase().replace(dotRegex, '')) > -1;
-}
 
 function findIndex(parts, variables) {
     for (let i = 0; i < parts.length; i++) {
@@ -82,63 +121,48 @@ function findIndex(parts, variables) {
 // Function to handle the "FirstName MiddleName LastName" format
 function handleFirstNameFirst(name, result, compound) {
     let parts = name.split(whitespaceRegex);
+    // handle suffix and salutation
     handleName(parts, result);
     // separate name has compound
     parts = handleCompound(parts, compound);
-    // if no compound split again
-    if (parts.length === 1) {
-        parts = parts[0].split(whitespaceRegex);
-    }
-
     // if the result only two
     if (parts.length === 2) {
         result.lastName = parts.pop();
         parts = parts[0].split(whitespaceRegex);
     }
-    // if the parts only 1 it mean it first name
-    if (parts.length === 1) {
-        result.firstName = parts[0];
-    }
-
-    // if length is only 2 again
-    if (parts.length === 2) {
-        result.firstName = parts.shift();
-        result.middleName = parts.shift();
-    }
-    if (parts.length === 3) {
-        result.firstName = parts[0];
-        result.middleName = parts[1];
-        result.lastName = parts[2];
-    }
-    if (parts.length > 3) {
+    if (parts.length > 2) {
         result.lastName = parts.pop();
         result.middleName = parts.pop();
-        result.firstName = parts.join(' ');
     }
+    result.firstName = parts.join(' ');
 }
 
 
 // Function to handle the "LastName, FirstName MiddleName" format
 function handleLastNameFirst(name, result, compound) {
-    let parts = name.split(',').map(part => part.trim());
+    let parts = name.split(',')
+        .reduce((acc, cur) => {
+            if (cur) {
+                acc.push(cur.trim());
+            }
+            return acc;
+        }, []);
     const lastNameParts = parts[0].split(whitespaceRegex);
-    // check suffix
-    const k = findIndex(lastNameParts, suffixes);
-    if (k > -1) {
-        result.suffix = lastNameParts[k].replace(dotRegex, '');
-        lastNameParts.splice(k, 1);  // Remove the suffix from parts
+    // check suffix in lastname
+    const i = findIndex(lastNameParts, suffixes);
+    if (i > -1) {
+        result.suffix = lastNameParts[i].replace(dotRegex, '');
+        lastNameParts.splice(i, 1);  // Remove the suffix from parts
     }
     result.lastName = lastNameParts.join(' ');
     parts = parts[1].split(whitespaceRegex);
     handleName(parts, result);
     parts = handleCompound(parts, compound);
     if (parts.length === 1) {
-        parts = parts[0].split(whitespaceRegex);
-    }
-    // only first name and middle name
-    if (parts.length === 2) {
         result.firstName = parts[0];
-        result.middleName = parts[1];
+    } else {
+        result.middleName = parts.pop();
+        result.firstName = parts.join(' ');
     }
 }
 
@@ -174,5 +198,4 @@ function parseName(name) {
     return result;
 }
 
-parseName.isSuffix = isSuffix;
 module.exports = parseName;

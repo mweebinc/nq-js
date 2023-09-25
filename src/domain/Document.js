@@ -10,9 +10,7 @@ class Document {
     create(collection, document, options = {}) {
         const path = ENDPOINT + collection
         const _options = {
-            body: document,
-            timeout: options.timeout,
-            session: options.session,
+            body: document, timeout: options.timeout, session: options.session,
         }
         return this.rest.request('POST', path, _options)
     }
@@ -20,9 +18,7 @@ class Document {
     get(collection, id, options = {}) {
         const path = ENDPOINT + collection + '/' + id;
         const _options = {
-            params: options.params,
-            timeout: options.timeout,
-            session: options.session,
+            params: options.params, timeout: options.timeout, session: options.session,
         }
         return this.rest.request('GET', path, _options);
     }
@@ -30,9 +26,7 @@ class Document {
     find(collection, query, options = {}) {
         const path = ENDPOINT + collection;
         const _options = {
-            body: query,
-            timeout: options.timeout,
-            session: options.session,
+            body: query, timeout: options.timeout, session: options.session,
         }
         return this.rest.request('GET', path, _options);
     }
@@ -40,10 +34,7 @@ class Document {
     update(collection, document, options = {}) {
         const path = ENDPOINT + collection + '/' + document.id
         const _options = {
-            body: document,
-            params: options.params,
-            timeout: options.timeout,
-            session: options.session,
+            body: document, params: options.params, timeout: options.timeout, session: options.session,
         }
         return this.rest.request('PUT', path, _options);
     }
@@ -51,8 +42,7 @@ class Document {
     delete(collection, id, options = {}) {
         const path = ENDPOINT + collection + '/' + id
         const _options = {
-            timeout: options.timeout,
-            session: options.session
+            timeout: options.timeout, session: options.session
         }
         return this.rest.request('DELETE', path, _options);
     }
@@ -60,9 +50,15 @@ class Document {
     aggregate(collection, pipeline, options = {}) {
         const path = '/aggregate/' + collection;
         const _options = {
-            body: {pipeline},
-            timeout: options.timeout,
-            session: options.session
+            body: {pipeline}, timeout: options.timeout, session: options.session
+        }
+        return this.rest.request('GET', path, _options);
+    }
+
+    count(collection, query, options = {}) {
+        const path = '/count/' + collection
+        const _options = {
+            body: query, timeout: options.timeout, session: options.session,
         }
         return this.rest.request('GET', path, _options);
     }
@@ -70,8 +66,7 @@ class Document {
     distinct(collection, field, query, options) {
         const path = '/distinct/' + collection
         const _options = {
-            timeout: options.timeout,
-            session: options.session
+            timeout: options.timeout, session: options.session
         }
         return this.rest.request('GET', path, _options);
     }

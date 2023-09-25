@@ -29,7 +29,7 @@ class XhrAdapter {
             }
             const xhr = new this.XHR();
             this.currentXhr = xhr;
-            xhr.timeout = options.timeout || this.timeout;
+            xhr.timeout = options.timeout ?? this.timeout;
             if (options.raw) {
                 xhr.responseType = "blob";
             }
@@ -78,6 +78,10 @@ class XhrAdapter {
             xhr.onabort = function () {
                 // no action for now
             };
+            xhr.ontimeout = function () {
+                console.error('Request timed out');
+                retry(xhr);
+            };
             //prepare connection
             xhr.open(options.method, url);
             for (const h in options.headers) {
@@ -112,7 +116,6 @@ class XhrAdapter {
         // cancel request
         if (this.currentXhr) {
             this.currentXhr.abort();
-            console.log("Request aborted");
         }
     }
 }

@@ -1,6 +1,44 @@
 const parseName = require('../src/parseName');
+const names = require('./names.json');
 
+describe('', function () {
+    const pass = [];
+    const fail = [];
+    it('Should parse all name attributes', () => {
+        let passCount = 0;
+        let failCount = 0;
+        names.forEach((name, i, list) => {
+            const parsed = parseName(name.name);
+            if (JSON.stringify(parsed) !== JSON.stringify(name.result)) {
+                console.log("Failed Name:", name.name);
+                console.log("Expected:", name.result);
+                console.log("Parsed:", parsed);
+                failCount++;
+                fail.push(name);
+            } else {
+                passCount++;
+                pass.push(name);
+            }
+        });
+        console.log("Total Passed:", passCount);
+        console.log("Total Failed:", failCount);
+        // console.log(JSON.stringify(pass));
+        expect(failCount).toBe(0);
+    });
+});
 describe('parseName', () => {
+    it('should parse names in "FirstName MiddleName LastName" format', () => {
+        // if the format is 3 parts it will automatically the middle_name is the center
+        const name = "LAGMAN, JOHN RYAN LUCERO";
+        const result = parseName(name);
+        expect(result).toEqual({
+            firstName: "JOHN RYAN",
+            middleName: "LUCERO",
+            lastName: "LAGMAN",
+            salutation: "",
+            suffix: ""
+        });
+    });
     it('should parse names in "FirstName MiddleName LastName" format', () => {
         // if the format is 3 parts it will automatically the middle_name is the center
         const name = "John Doe Franco";
@@ -84,8 +122,8 @@ describe('parseName', () => {
         const name = "John Doe von Franco";
         const result = parseName(name);
         expect(result).toEqual({
-            firstName: "John",
-            middleName: "Doe",
+            firstName: "John Doe",
+            middleName: "",
             lastName: "von Franco",
             salutation: "",
             suffix: ""
@@ -95,8 +133,8 @@ describe('parseName', () => {
         const name = "Dr. John Doe von Franco Jr.";
         const result = parseName(name);
         expect(result).toEqual({
-            firstName: "John",
-            middleName: "Doe",
+            firstName: "John Doe",
+            middleName: "",
             lastName: "von Franco",
             salutation: "Dr",
             suffix: "Jr"
@@ -106,8 +144,8 @@ describe('parseName', () => {
         const name = "John Doe De Los Reyes";
         const result = parseName(name);
         expect(result).toEqual({
-            firstName: "John",
-            middleName: "Doe",
+            firstName: "John Doe",
+            middleName: "",
             lastName: "De Los Reyes",
             salutation: "",
             suffix: ""
@@ -186,6 +224,17 @@ describe('parseName', () => {
             firstName: "John",
             middleName: "Della Vega",
             lastName: "De Los Reyes",
+            salutation: "",
+            suffix: ""
+        });
+    });
+   it('should handle names with middle name and compound last name', () => {
+        const name = "Franco, John V";
+        const result = parseName(name);
+        expect(result).toEqual({
+            firstName: "John",
+            middleName: "V",
+            lastName: "Franco",
             salutation: "",
             suffix: ""
         });
@@ -273,6 +322,18 @@ describe('handle invalid', function () {
             lastName: "",
             salutation: "",
             suffix: "Jr"
+        });
+    });
+
+    it('should handle hande double comma', () => {
+        const name = "BALUCAN JR,, FELIX BETONIO";
+        const result = parseName(name);
+        expect(result).toEqual({
+            firstName: "FELIX",
+            middleName: "BETONIO",
+            lastName: "BALUCAN",
+            salutation: "",
+            suffix: "JR"
         });
     });
 
