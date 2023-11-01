@@ -23,7 +23,6 @@ const suffixes = [
     'ii',      // The Second
     'iii',     // The Third
     'iv',      // The Fourth
-    // 'v',       // The Fifth, currently disable due sometime has V. middle name
     'vi',      // The Sixth
     'vii',     // The Seventh
     'viii',    // The Eighth
@@ -49,14 +48,14 @@ const compound = [
     // Dutch origin
     'vanden', 'zum', 'zur',
     // Spanish & Portuguese origin
-    'dos', 'das', 'y', 'o',
+    'delos','dos', 'das', 'y', 'o',
     // Arabic origin
     'bin', 'ibn', 'el', 'al',
     // Italian origin
     'pietro', 'la', 'lo', 'e',
     // Other
     'st.', 'st', 'ter', 'te', 'ten', 'op', 'ben', 'zu', 'im', 'un', 'une', 'le',
-    'mac', 'mc', 'ap', 'af', 'vel', 'd', 'of', 'am', 'auf', 'in', 'delos', 'der', 'den'
+    'mac', 'mc', 'ap', 'af', 'vel', 'd', 'of', 'am', 'auf', 'in',  'der', 'den'
 ];
 
 function spliceAtIndex(parts, index) {

@@ -51,5 +51,6 @@ Queue.flatten = flatten;
 Queue.unflatten = unflatten;
 Queue.browseFile = browseFile;
 Queue.parseName = parseName;
+Queue.parse = require('./parse');
 
 module.exports = Queue;

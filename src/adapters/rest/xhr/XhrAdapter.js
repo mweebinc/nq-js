@@ -12,9 +12,9 @@ const REQUEST_ATTEMPT_LIMIT = 5
 class XhrAdapter {
     /**
      * @param XHR
-     * @param timeout 20second by default
+     * @param timeout no timeout by default
      */
-    constructor(XHR, timeout = 20000) {
+    constructor(XHR, timeout = 0) {
         this.XHR = XHR;
         this.timeout = timeout;
     }
