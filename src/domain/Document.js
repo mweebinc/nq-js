@@ -26,7 +26,9 @@ class Document {
     find(collection, query, options = {}) {
         const path = ENDPOINT + collection;
         const _options = {
-            body: query, timeout: options.timeout, session: options.session,
+            body: query,
+            timeout: options.timeout,
+            session: options.session,
         }
         return this.rest.request('GET', path, _options);
     }
