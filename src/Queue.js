@@ -33,5 +33,6 @@ Queue.unflatten = require('./unflatten');
 Queue.browseFile = require('./browseFile');
 Queue.parseName = require('./parseName');
 Queue.parse = require('./parse');
+Queue.downloadFromURL = require('./downloadFromURL');
 
 module.exports = Queue;

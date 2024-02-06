@@ -9,15 +9,15 @@ class File {
 
     save(blob, options = {}) {
         const _options = {
-            body: blob,
-            headers: {'Content-Type': blob.type},
-            progress: options.progress
+            body: blob, headers: {'Content-Type': blob.type}, progress: options.progress
         }
         return this.rest.request('POST', ENDPOINT + blob.name, _options, options.session);
     }
 
-    delete(filename) {
-        return this.rest.request('DELETE', ENDPOINT + filename);
+    delete(path) {
+        const url = new URL(path);
+        const name = url.pathname.split('/').pop();
+        return this.rest.request('DELETE', ENDPOINT + name);
     }
 
     static get(path) {
@@ -35,6 +35,7 @@ class File {
         path = path.split('/').pop();
         return Config.get('SERVER_URL') + '/files/' + Config.get('APPLICATION_ID') + '/' + path;
     }
+
     static getFilename(url) {
         // return path.split('/').pop();
         const pathname = new URL(url).pathname;
