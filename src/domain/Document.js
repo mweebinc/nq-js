@@ -17,8 +17,11 @@ class Document {
 
     get(collection, id, options = {}) {
         const path = ENDPOINT + collection + '/' + id;
+        const {session,params,timeout,...res} = options;
         const _options = {
-            params: options.params, timeout: options.timeout, session: options.session,
+            params: {...res,...params},
+            timeout: timeout,
+            session: session,
         }
         return this.rest.request('GET', path, _options);
     }
