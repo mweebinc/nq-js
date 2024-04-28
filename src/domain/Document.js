@@ -44,7 +44,8 @@ class Document {
         return this.rest.request('PUT', path, _options);
     }
 
-    delete(collection, id, options = {}) {
+    delete(collection, object, options = {}) {
+        const id = object.id || object;
         const path = ENDPOINT + collection + '/' + id
         const _options = {
             timeout: options.timeout, session: options.session

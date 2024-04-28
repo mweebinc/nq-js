@@ -21,8 +21,11 @@ class File {
     }
 
     static get(path) {
-        path = path.split('/').pop();
-        return Config.get('SERVER_URL') + '/files/' + Config.get('APPLICATION_ID') + '/' + path;
+        if(path && path.startsWith('http')) {
+            path = path.split('/').pop();
+            return Config.get('SERVER_URL') + '/files/' + Config.get('APPLICATION_ID') + '/' + path;
+        }
+        return path;
     }
 
     // deprecated
