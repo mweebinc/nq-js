@@ -7,7 +7,7 @@ const OPENED = 1; // open called
 const HEADERS_RECEIVED = 2; // response headers received
 const LOADING = 3; // response is loading (a data packet is received)
 const DONE = 4; // request complete
-const REQUEST_ATTEMPT_LIMIT = 5
+const REQUEST_ATTEMPT_LIMIT = 10;
 
 class XhrAdapter {
     /**
@@ -71,8 +71,7 @@ class XhrAdapter {
                     handleProgress('upload', event, options);
                 };
             }
-            xhr.onerror = function (e) {
-                console.error('error', e);
+            xhr.onerror = function () {
                 retry(xhr);
             };
             xhr.onabort = function () {
@@ -102,7 +101,8 @@ class XhrAdapter {
                 console.log('delay', delay);
                 setTimeout(dispatch, delay);
             } else if (xhr.status === 0) {
-                promise.reject(new ParseError(ParseError.CONNECTION_FAILED, 'Unable to connect to the internet'));
+                promise.reject('Unable to connect to the internet');
+                // promise.reject(new ParseError(ParseError.CONNECTION_FAILED, 'Unable to connect to the internet'));
             } else {
                 // After the retry limit is reached, fail
                 promise.reject(xhr.response);

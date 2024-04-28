@@ -38,28 +38,32 @@ function extractMatches(template, regex) {
  * @param {Object} source - The source object.
  * @returns {string|*} - The string with all placeholders replaced.
  */
-
 function replace(template, source) {
     const regex = /\${(.*?)\}/g;
     const matches = extractMatches(template, regex);
-    // of single match maintain the variable type
-    if (matches.length === 1) {
+
+    // Check if there is only one match and it encompasses the entire string
+    if (matches.length === 1 && matches[0][0] === template) {
         const value = getValueFromPath(source, matches[0][1]);
-        return value ?? '';
+        if (Array.isArray(value)) {
+            return value; // Return the array directly
+        }
+        if (value === undefined) {
+            return '';
+        }
+        return value;
     }
-    // the result will be converted to string
+    // General case for multiple matches
     let result = template;
     for (const match of matches) {
         const value = getValueFromPath(source, match[1]);
-        result = result.replace(match[0], value !== undefined ? value : ''); // replace with empty string if undefined
+        result = result.replace(match[0], value !== undefined ? value : '');
     }
     return result;
 }
-
-
 /**
  * Parses a value (can be an array, object, or string) and replaces all placeholders with their corresponding values from a source object.
- * @param {*} value - The value to parse.
+ * @param {*} value - The template to parse.
  * @param {Object} source - The source object.
  * @returns {*} - The parsed value.
  */
@@ -94,5 +98,4 @@ function parse(value, source) {
     // Return the value as is if it's not an array, object, or string
     return value;
 }
-
 module.exports = parse;

@@ -34,5 +34,9 @@ Queue.browseFile = require('./browseFile');
 Queue.parseName = require('./parseName');
 Queue.parse = require('./parse');
 Queue.downloadFromURL = require('./downloadFromURL');
+Queue.nameToNumber = require('./nameToNumber');
+Queue.formatNumber = require('./formatNumber');
+Queue.dateToMMDDYY = require('./dateToMMDDYY');
+Queue.dateFormat = require('./dateFormat');
 
 module.exports = Queue;
