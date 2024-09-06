@@ -8,4 +8,4 @@ function dateFormat(string) {
     return formattedDate;
 }
 
-export default dateFormat;
+module.exports = dateFormat;

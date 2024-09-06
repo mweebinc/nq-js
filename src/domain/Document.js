@@ -17,13 +17,14 @@ class Document {
 
     get(collection, id, options = {}) {
         const path = ENDPOINT + collection + '/' + id;
-        const {session,params,timeout,...res} = options;
-        const _options = {
-            params: {...res,...params},
+        const {session, applicationId, params, timeout, ...res} = options;
+        options = {
+            params: {...res, ...params},
             timeout: timeout,
             session: session,
+            applicationId: applicationId,
         }
-        return this.rest.request('GET', path, _options);
+        return this.rest.request('GET', path, options);
     }
 
     find(collection, query, options = {}) {
