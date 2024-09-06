@@ -48,14 +48,14 @@ const compound = [
     // Dutch origin
     'vanden', 'zum', 'zur',
     // Spanish & Portuguese origin
-    'delos','dos', 'das', 'y', 'o',
+    'delos', 'dos', 'das', 'y', 'o',
     // Arabic origin
     'bin', 'ibn', 'el', 'al',
     // Italian origin
     'pietro', 'la', 'lo', 'e',
     // Other
     'st.', 'st', 'ter', 'te', 'ten', 'op', 'ben', 'zu', 'im', 'un', 'une', 'le',
-    'mac', 'mc', 'ap', 'af', 'vel', 'd', 'of', 'am', 'auf', 'in',  'der', 'den'
+    'mac', 'mc', 'ap', 'af', 'vel', 'd', 'of', 'am', 'auf', 'in', 'der', 'den'
 ];
 
 function spliceAtIndex(parts, index) {
@@ -71,7 +71,6 @@ function handleName(parts, result) {
     if (i > -1) {
         result.salutation = spliceAtIndex(parts, i);
     }
-
     const j = findIndex(parts, suffixes);
     if (j > -1) {
         result.suffix = spliceAtIndex(parts, j);
@@ -117,11 +116,22 @@ function findIndex(parts, variables) {
     return -1;
 }
 
+function handleMiddleInitial(parts, result) {
+    const middleInitialRegex = /^[A-Z]\.$/i;
+    for (let i = 0; i < parts.length; i++) {
+        if (middleInitialRegex.test(parts[i])) {
+            result.middleName = parts.splice(i, 1)[0];
+        }
+    }
+}
+
 // Function to handle the "FirstName MiddleName LastName" format
 function handleFirstNameFirst(name, result, compound) {
     let parts = name.split(whitespaceRegex);
     // handle suffix and salutation
     handleName(parts, result);
+    // handle middle initial
+    handleMiddleInitial(parts, result);
     // separate name has compound
     parts = handleCompound(parts, compound);
     // if the result only two

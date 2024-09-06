@@ -1,10 +1,11 @@
+const Config = require('./Config');
 class Queue {
     static setUrl(value) {
-        require('./Config').set('SERVER_URL', value);
+        Config.set('SERVER_URL', value);
     }
 
     static setApplicationId(value) {
-        require('./Config').set('APPLICATION_ID', value);
+        Config.set('APPLICATION_ID', value);
     }
 }
 
@@ -38,5 +39,10 @@ Queue.nameToNumber = require('./nameToNumber');
 Queue.formatNumber = require('./formatNumber');
 Queue.dateToMMDDYY = require('./dateToMMDDYY');
 Queue.dateFormat = require('./dateFormat');
+Queue.NFCReader = require('./NFCReader');
+Queue.onHIDScanner = require('./onHIDScanner');
+Queue.click = require('./click');
+Queue.nodeToJson = require('./nodeToJson');
+Queue.Config = Config;
 
 module.exports = Queue;

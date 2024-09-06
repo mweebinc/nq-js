@@ -20,10 +20,12 @@ class File {
         return this.rest.request('DELETE', ENDPOINT + name);
     }
 
-    static get(path) {
-        if(path && path.startsWith('http')) {
+    static get(path, {applicationId} = {}) {
+        if (path && path.startsWith('http')) {
+            const search = Object.fromEntries(new URLSearchParams(window.location.search));
+            applicationId = applicationId || search.applicationId || Config.get('APPLICATION_ID');
             path = path.split('/').pop();
-            return Config.get('SERVER_URL') + '/files/' + Config.get('APPLICATION_ID') + '/' + path;
+            return Config.get('SERVER_URL') + '/files/' + applicationId + '/' + path;
         }
         return path;
     }
@@ -34,6 +36,7 @@ class File {
         return Config.get('SERVER_URL') + '/files/' + Config.get('APPLICATION_ID') + '/' + path;
     }
 
+    // deprecated
     static getPath(path) {
         path = path.split('/').pop();
         return Config.get('SERVER_URL') + '/files/' + Config.get('APPLICATION_ID') + '/' + path;

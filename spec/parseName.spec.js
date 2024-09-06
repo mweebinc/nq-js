@@ -1,7 +1,7 @@
 const parseName = require('../src/parseName');
 const names = require('./names.json');
+describe('parseName', () => {
 
-describe('', function () {
     const pass = [];
     const fail = [];
     it('Should parse all name attributes', () => {
@@ -25,9 +25,7 @@ describe('', function () {
         // console.log(JSON.stringify(pass));
         expect(failCount).toBe(0);
     });
-});
-describe('parseName', () => {
-    it('should parse names in "FirstName MiddleName LastName" format', () => {
+    it('should parse names in "LastName, FirstName MiddleName" format', () => {
         // if the format is 3 parts it will automatically the middle_name is the center
         const name = "LAGMAN, JOHN RYAN LUCERO";
         const result = parseName(name);
@@ -49,6 +47,18 @@ describe('parseName', () => {
             lastName: "Franco",
             salutation: "",
             suffix: ""
+        });
+    });
+    it('should parse names in "FirstName MiddleInitial LastName" format', () => {
+        // if the format is 3 parts it will automatically the middle_name is the center
+        const name = "NARCISO 'NARCING' N. DE GUZMAN";
+        const result = parseName(name);
+        expect(result).toEqual({
+            "firstName": "NARCISO 'NARCING'",
+            "middleName": "N.",
+            "lastName": "DE GUZMAN",
+            "salutation": "",
+            "suffix": ""
         });
     });
     it('should parse names with salutations', () => {

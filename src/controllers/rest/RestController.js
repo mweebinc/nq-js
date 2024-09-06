@@ -7,98 +7,72 @@ class RestController {
         this.adapter = adapter;
         this.cache = cache;
     }
-
-    getSession(session) {
-        this.cache.get(SESSION_KEY)
-            .then((_session) => {
-                this.session = session || _session;
-            });
+    getSession() {
+        return this.cache.get(SESSION_KEY);
     }
-
     setSession(session) {
-        this.cache.put(SESSION_KEY, session);
+        return this.cache.put(SESSION_KEY, session);
     }
-
     clearSession() {
         return this.cache.delete(SESSION_KEY);
     }
-
     getAppId() {
-        this.cache.get(APPLICATION_ID_KEY)
-            .then((id) => {
-                this.appId = Config.get(APPLICATION_ID_KEY) || id;
-            });
+        const {applicationId} = Object.fromEntries(new URLSearchParams(window.location.search));
+        return applicationId || Config.get(APPLICATION_ID_KEY);
     }
-
-    setAppId(id) {
-        this.cache.put(APPLICATION_ID_KEY, id);
-    }
-
     getUrl(method, path, body, params) {
         const base = Config.get('SERVER_URL');
         const url = new URL(base + path);
-        if (method === 'GET' && body) {
-            for (const p in body) {
-                url.searchParams.set(p, JSON.stringify(body[p]));
+        const setParams = (obj) => {
+            for (const p in obj) {
+                url.searchParams.set(p, JSON.stringify(obj[p]));
             }
+        };
+        if (method === 'GET' && body) {
+            setParams(body);
         }
         if (params) {
-            for (const p in params) {
-                url.searchParams.set(p, JSON.stringify(params[p]));
-            }
+            setParams(params);
         }
         return url;
     }
-
-    getDefaultHeaders() {
-        const headers = {};
-        headers['Content-Type'] = 'application/json';
-        headers['X-Application-Id'] = this.appId;
-        if (this.session) {
-            headers['X-Session-Token'] = this.session;
+    async request(method, path, {params, session, applicationId, body, headers,...res}={}) {
+        headers = headers || {};
+        applicationId = applicationId || await this.getAppId();
+        session = session || await this.getSession();
+        // create headers
+        if (session) {
+            headers['X-Session-Token'] = session;
         }
-        return headers;
-    }
-
-    transformBody(body, type) {
-        switch (type) {
-            case 'application/json':
-                return JSON.stringify(body);
-            default:
-                return body;
+        headers['X-Application-Id'] = applicationId;
+        headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+        //
+        const url = this.getUrl(method, path, body, params);
+        // body data only allowed in POST and PUT methods
+        if (body && (method === 'POST' || method === 'PUT')) {
+            if (headers['Content-Type'] === 'application/json') {
+                body =  JSON.stringify(body);
+            }
         }
-    }
-
-    request(method, path, {params, session, ...options} = {}) {
-        return Promise.resolve()
-            .then(() => this.getAppId())
-            .then(() => this.getSession(session))
-            .then(() => this.getUrl(method, path, options.body, params))
-            .then((url) => this._request(url, method, options));
-    }
-
-    abort() {
-        this.adapter.abort();
-    }
-
-    _request(url, method, {headers, body, ...other}) {
+        // create options to request
         const options = {
             method: method,
-            headers: Object.assign(this.getDefaultHeaders(), headers),
-            ...other
+            headers: headers,
+            body: body,
+            ...res
         };
-        // body data only allowed in POST and PUT method
-        if (body && method === 'POST' || method === 'PUT') {
-            options.body = this.transformBody(body, options.headers['Content-Type']);
+        try {
+            return await this.adapter.request(url, options);
+        } catch (error) {
+            // if invalid session token
+            if (error.code === 401) {
+                await this.clearSession();
+            }
+            throw error;
         }
-        return this.adapter.request(url, options)
-            .catch(error => {
-                // if invalid session token
-                if (error.code === 401) {
-                    this.clearSession();
-                }
-                throw error;
-            });
+    }
+    abort() {
+        this.adapter.abort();
     }
 }
 

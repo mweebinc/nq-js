@@ -10,6 +10,9 @@ const config = {
 const Config = {
     get: function (key) {
         if (config.hasOwnProperty(key)) {
+            if (key === 'APPLICATION_ID') {
+                return config[key] || window.localStorage.getItem(key);
+            }
             return config[key];
         }
         throw new Error('Configuration key not found.');
