@@ -118,5 +118,15 @@
       "salutation": "",
       "suffix": ""
     }
+  },
+  {
+    "name": "John D. Doe",
+    "result": {
+      "firstName": "John",
+      "middleName": "D.",
+      "lastName": "Doe",
+      "salutation": "",
+      "suffix": ""
+    }
   }
 ]

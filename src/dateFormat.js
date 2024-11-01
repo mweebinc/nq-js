@@ -1,4 +1,7 @@
 function dateFormat(string) {
+    if (!string) {
+        return '';
+    }
     // Extract year, month, and day assuming format is YYYY-MM-DD
     const [year, month, day] = string.split('-');
     // Create a mapping of month numbers to month names

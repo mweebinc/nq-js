@@ -29,7 +29,6 @@ describe('flatten function', () => {
         expect(output).toEqual([{ a: 1, 'b.c': 2, 'b.d': 3 }]);
     });
 
-
     it('should flatten an object with arrays', () => {
         const input = {
             a: 1,

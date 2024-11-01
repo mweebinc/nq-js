@@ -1,4 +1,4 @@
-const RestController = require('../src/controllers/rest/RestController');
+const RestController = require('../src/controllers/rest/RestController3');
 const Config = require('../src/Config');
 describe('RestController', () => {
     let restAdapter;

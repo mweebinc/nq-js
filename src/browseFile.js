@@ -3,9 +3,10 @@ const createPromise = require('./createPromise');
 
 /**
  * @param accept file type
+ * @param multiple
  * @returns {Promise | Promise<unknown>}
  */
-function browseFile(accept, multiple = false) {
+function browseFile(accept, multiple) {
     const p = createPromise();
     const input = document.createElement('input');
     input.type = "file";

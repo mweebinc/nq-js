@@ -5,18 +5,22 @@ class User {
         this.rest = getRestController()
     }
 
-    signUp(user) {
-        const options = {
-            body: user
+    signUp(user, options = {}) {
+        const _options = {
+            body: user,
+            timeout: options.timeout,
+            masterKey: options.masterKey,
         }
-        return this.rest.request('POST', '/signup', options)
+        return this.rest.request('POST', '/signup', _options)
     }
-    
-    signIn(user) {
-        const options = {
-            body: user
+
+    signIn(user, options = {}) {
+        const _options = {
+            body: user,
+            timeout: options.timeout,
+            masterKey: options.masterKey,
         }
-        return this.rest.request('POST', '/signin', options)
+        return this.rest.request('POST', '/signin', _options)
             .then(response => {
                 this.rest.setSession(response.sessionToken);
                 return response;
@@ -26,7 +30,8 @@ class User {
     getCurrentUser(options = {}) {
         const _options = {
             timeout: options.timeout,
-            session: options.session
+            session: options.session,
+            masterKey: options.masterKey,
         }
         return this.rest.request('GET', '/me', _options);
     }
@@ -51,7 +56,8 @@ class User {
             body: {
                 email: email,
                 timeout: options.timeout,
-                session: options.session
+                session: options.session,
+                masterKey: options.masterKey
             }
         }
         return this.rest.request('POST', '/reset/', _options);

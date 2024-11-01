@@ -31,7 +31,12 @@ describe('LiveQueryClient', function () {
     });
     it('should send subscribe', function (done) {
         const applicationId = 'test';
-        const query = {collection: 'chats', where: {message: 'hi'}};
+        const query = {
+            collection: 'chats',
+            where: {
+                message: 'hi'
+            }
+        };
         let id = 1;
         const ws = {
             send: function (data) {
