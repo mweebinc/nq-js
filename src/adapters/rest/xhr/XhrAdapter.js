@@ -1,6 +1,6 @@
 const handleProgress = require('./handleProgress');
-const resolvingPromise = require('./resolvingPromise')
-const ParseError = require('./ParseError')
+const handleChunk = require('./handleChunk');
+const createPromise = require('../../../createPromise')
 
 const UNSENT = 0; // initial state
 const OPENED = 1; // open called
@@ -17,10 +17,11 @@ class XhrAdapter {
     constructor(XHR, timeout = 0) {
         this.XHR = XHR;
         this.timeout = timeout;
+        this.position = 0;
     }
 
     request(url, options) {
-        const promise = resolvingPromise();
+        const promise = createPromise();
         let attempts = 0;
         // arrow function to use .this
         const dispatch = () => {
@@ -33,7 +34,7 @@ class XhrAdapter {
             if (options.raw) {
                 xhr.responseType = "blob";
             }
-            xhr.onreadystatechange = function () {
+            xhr.onreadystatechange = () => {
                 switch (xhr.readyState) {
                     case UNSENT:
                         break;
@@ -42,11 +43,13 @@ class XhrAdapter {
                     case HEADERS_RECEIVED:
                         break;
                     case LOADING:
-                        // partial data received
-                        // console.log(xhr.response);
-                        // console.log("");
-                        break;
                     case DONE:
+                        if (options && typeof options.onData === 'function') {
+                            // partial data received
+                            const [objects, remain] = handleChunk(xhr.responseText, this.position);
+                            this.position = remain;
+                            options.onData(objects);
+                        }
                         break;
                 }
             }
@@ -67,6 +70,7 @@ class XhrAdapter {
                 handleProgress('download', event, options);
             };
             if (xhr.upload) {
+                console.log('upload');
                 xhr.upload.onprogress = event => {
                     handleProgress('upload', event, options);
                 };

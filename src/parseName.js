@@ -66,7 +66,7 @@ function spliceAtIndex(parts, index) {
     return '';
 }
 
-function handleName(parts, result) {
+function handleNameSalutationSuffix(parts, result) {
     const i = findIndex(parts, salutations);
     if (i > -1) {
         result.salutation = spliceAtIndex(parts, i);
@@ -128,9 +128,7 @@ function handleMiddleInitial(parts, result) {
 // Function to handle the "FirstName MiddleName LastName" format
 function handleFirstNameFirst(name, result, compound) {
     let parts = name.split(whitespaceRegex);
-    // handle suffix and salutation
-    handleName(parts, result);
-    // handle middle initial
+    handleNameSalutationSuffix(parts, result);
     handleMiddleInitial(parts, result);
     // separate name has compound
     parts = handleCompound(parts, compound);
@@ -141,7 +139,9 @@ function handleFirstNameFirst(name, result, compound) {
     }
     if (parts.length > 2) {
         result.lastName = parts.pop();
-        result.middleName = parts.pop();
+        if (!result.middleName) {
+            result.middleName = parts.pop();
+        }
     }
     result.firstName = parts.join(' ');
 }
@@ -165,7 +165,7 @@ function handleLastNameFirst(name, result, compound) {
     }
     result.lastName = lastNameParts.join(' ');
     parts = parts[1].split(whitespaceRegex);
-    handleName(parts, result);
+    handleNameSalutationSuffix(parts, result);
     parts = handleCompound(parts, compound);
     if (parts.length === 1) {
         result.firstName = parts[0];

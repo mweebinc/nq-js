@@ -14,7 +14,6 @@ class Document {
             timeout: options.timeout,
             session: options.session,
             masterKey: options.masterKey
-
         }
         return this.rest.request('POST', path, _options)
     }
@@ -38,7 +37,8 @@ class Document {
             body: query,
             timeout: options.timeout,
             session: options.session,
-            masterKey: options.masterKey
+            masterKey: options.masterKey,
+            onData: options.onData,
         }
         return this.rest.request('GET', path, _options);
     }
@@ -46,8 +46,8 @@ class Document {
     update(collection, document, options = {}) {
         const path = ENDPOINT + collection + '/' + document.id
         const _options = {
-            body: document, params:
-            options.params,
+            body: document,
+            params: options.params,
             timeout: options.timeout,
             session: options.session,
             masterKey: options.masterKey

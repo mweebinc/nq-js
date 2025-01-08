@@ -9,7 +9,9 @@ class File {
 
     save(blob, options = {}) {
         const _options = {
-            body: blob, headers: {'Content-Type': blob.type}, progress: options.progress
+            body: blob,
+            headers: {'Content-Type': blob.type},
+            progress: options.progress
         }
         return this.rest.request('POST', ENDPOINT + blob.name, _options, options.session);
     }
