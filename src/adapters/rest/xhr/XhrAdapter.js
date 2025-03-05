@@ -70,7 +70,6 @@ class XhrAdapter {
                 handleProgress('download', event, options);
             };
             if (xhr.upload) {
-                console.log('upload');
                 xhr.upload.onprogress = event => {
                     handleProgress('upload', event, options);
                 };

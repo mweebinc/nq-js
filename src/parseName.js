@@ -40,7 +40,7 @@ const dotRegex = /\./g;
 const whitespaceRegex = /\s+/;
 
 // Compound Name Particles
-const compound = [
+const compounds = [
     // Germanic origin
     'von', 'van', 'vere',
     // Latin origin
@@ -61,37 +61,43 @@ const compound = [
 function spliceAtIndex(parts, index) {
     if (index > -1) {
         const [splicedElement] = parts.splice(index, 1);
-        return splicedElement.replace(/\./g, '');
+        return splicedElement.replace(dotRegex, '');
     }
     return '';
 }
 
-function handleNameSalutationSuffix(parts, result) {
-    const i = findIndex(parts, salutations);
-    if (i > -1) {
-        result.salutation = spliceAtIndex(parts, i);
-    }
-    const j = findIndex(parts, suffixes);
-    if (j > -1) {
-        result.suffix = spliceAtIndex(parts, j);
+function findAndAssignKey(parts, result, components, key) {
+    if (!result[key]) { // Prevents overwriting an existing key
+        const i = findIndex(parts, components);
+        if (i > -1) {
+            result[key] = spliceAtIndex(parts, i);
+        }
     }
 }
 
+function handleSalutationAndSuffix(parts, result) {
+    findAndAssignKey(parts, result, salutations, 'salutation');
+    findAndAssignKey(parts, result, suffixes, 'suffix');
+}
+
 function handleCompound(parts, compounds) {
-    const accumulator = [];
-    let current = [];
+    const accumulator = []; // parent array
+    let current = []; // child array
+    // Merge compound parts
     for (let i = 0; i < parts.length; i++) {
         const part = parts[i];
         const len = parts.length;
         const isLast = i === len - 1;
-        // if part is a compound, add current to accumulator
+        // if current part is compound
         if (compounds.includes(part.toLowerCase())) {
+            // if current has value push to accumulator
             if (current.length > 0) {
                 accumulator.push(current);
             }
+            // create new current with the compound part
             current = [part];
         } else {
-            // add all part to the current
+            // add every part to the current if not compound
             current.push(part);
         }
         // If this is the last part, finalize the current name
@@ -99,6 +105,7 @@ function handleCompound(parts, compounds) {
             accumulator.push(current);
         }
     }
+    // Join all parts
     parts = accumulator.map(accumulator => accumulator.join(' '));
     // if no compound split again
     if (parts.length === 1) {
@@ -107,48 +114,57 @@ function handleCompound(parts, compounds) {
     return parts;
 }
 
-
 function findIndex(parts, variables) {
-    for (let i = 0; i < parts.length; i++) {
-        const word = parts[i];
-        if (variables.includes(word.toLowerCase().replace(dotRegex, ''))) return i;
-    }
-    return -1;
+    return parts.findIndex(part => variables.includes(part.toLowerCase().replace(dotRegex, '')));
 }
 
 function handleMiddleInitial(parts, result) {
-    const middleInitialRegex = /^[A-Z]\.$/i;
-    for (let i = 0; i < parts.length; i++) {
-        if (middleInitialRegex.test(parts[i])) {
-            result.middleName = parts.splice(i, 1)[0];
-        }
-    }
+    const i = parts.findIndex(part => /^[A-Z]\.$/i.test(part));
+    if (i !== -1) result.middleName = parts.splice(i, 1)[0];
 }
 
 // Function to handle the "FirstName MiddleName LastName" format
-function handleFirstNameFirst(name, result, compound) {
+function handleFirstNameFirst(name, result) {
     let parts = name.split(whitespaceRegex);
-    handleNameSalutationSuffix(parts, result);
+    handleSalutationAndSuffix(parts, result);
     handleMiddleInitial(parts, result);
-    // separate name has compound
-    parts = handleCompound(parts, compound);
-    // if the result only two
+
+    // separate name has compounds
+    parts = handleCompound(parts, compounds);
+
+    // If only two parts, the last part is the last name
+    // The first part is need to split again
     if (parts.length === 2) {
         result.lastName = parts.pop();
         parts = parts[0].split(whitespaceRegex);
     }
     if (parts.length > 2) {
-        result.lastName = parts.pop();
+        if(!result.lastName){
+            result.lastName = parts.pop();
+        }
         if (!result.middleName) {
             result.middleName = parts.pop();
         }
     }
+    // The remaining parts are the first name
     result.firstName = parts.join(' ');
 }
 
+function lastNameFirst(name, result) {
+    let parts = name.split(whitespaceRegex);
+    handleSalutationAndSuffix(parts, result);
+    handleMiddleInitial(parts, result);
+    parts = handleCompound(parts, compounds);
+    if (parts.length === 1) {
+        result.firstName = parts[0];
+    } else {
+        result.middleName = parts.pop();
+        result.firstName = parts.join(' ');
+    }
+}
 
 // Function to handle the "LastName, FirstName MiddleName" format
-function handleLastNameFirst(name, result, compound) {
+function handleLastNameFirst(name, result) {
     let parts = name.split(',')
         .reduce((acc, cur) => {
             if (cur) {
@@ -158,15 +174,11 @@ function handleLastNameFirst(name, result, compound) {
         }, []);
     const lastNameParts = parts[0].split(whitespaceRegex);
     // check suffix in lastname
-    const i = findIndex(lastNameParts, suffixes);
-    if (i > -1) {
-        result.suffix = lastNameParts[i].replace(dotRegex, '');
-        lastNameParts.splice(i, 1);  // Remove the suffix from parts
-    }
+    findAndAssignKey(lastNameParts, result, suffixes, 'suffix');
     result.lastName = lastNameParts.join(' ');
     parts = parts[1].split(whitespaceRegex);
-    handleNameSalutationSuffix(parts, result);
-    parts = handleCompound(parts, compound);
+    handleSalutationAndSuffix(parts, result);
+    parts = handleCompound(parts, compounds);
     if (parts.length === 1) {
         result.firstName = parts[0];
     } else {
@@ -200,9 +212,9 @@ function parseName(name) {
         .trim()// remove extra space at start and end
 
     if (name.includes(',')) {
-        handleLastNameFirst(name, result, compound);
+        handleLastNameFirst(name, result);
     } else {
-        handleFirstNameFirst(name, result, compound);
+        handleFirstNameFirst(name, result);
     }
     return result;
 }

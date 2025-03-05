@@ -37,6 +37,7 @@ describe('parseName', () => {
             suffix: ""
         });
     });
+
     it('should parse names in "FirstName MiddleName LastName" format', () => {
         // if the format is 3 parts it will automatically the middle_name is the center
         const name = "John Doe Franco";
@@ -227,6 +228,18 @@ describe('parseName', () => {
             suffix: ""
         });
     });
+    it('should handle names with last name compound', () => {
+        const name = "John Carlo Villa De Los Reyes";
+        const result = parseName(name);
+        console.log(result)
+        expect(result).toEqual({
+            firstName: "John Carlo",
+            middleName: "Villa",
+            lastName: "De Los Reyes",
+            salutation: "",
+            suffix: ""
+        });
+    });
     it('should handle names with middle name and compound last name', () => {
         const name = "John Della Vega De Los Reyes";
         const result = parseName(name);
@@ -238,7 +251,7 @@ describe('parseName', () => {
             suffix: ""
         });
     });
-   it('should handle names with middle name and compound last name', () => {
+    it('should handle names with middle name and compound last name', () => {
         const name = "Franco, John V";
         const result = parseName(name);
         expect(result).toEqual({
@@ -249,6 +262,8 @@ describe('parseName', () => {
             suffix: ""
         });
     });
+
+
 });
 describe('handle invalid', function () {
     it('should handle empty strings', () => {
