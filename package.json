@@ -1,10 +1,11 @@
 {
-  "name": "nq",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "private": true,
+  "name": "nq-js",
+  "version": "1.0.1",
+  "description": "Client-side JavaScript library of nq-api",
+  "main": "dist/Queue.js",
   "scripts": {
+    "build": "babel src --out-dir dist",
+    "prepublishOnly": "npm run build",
     "test": "jasmine",
     "link": "yarn link"
   },
@@ -15,6 +16,9 @@
     "ws": "^8.8.0"
   },
   "devDependencies": {
-    "jasmine": "^4.6.0"
+    "jasmine": "^4.6.0",
+    "@babel/cli": "^7.21.0",
+    "@babel/core": "^7.21.0",
+    "@babel/preset-env": "^7.21.0"
   }
 }
